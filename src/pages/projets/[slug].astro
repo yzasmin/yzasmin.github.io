@@ -1,0 +1,243 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectGlyph from '../../components/ProjectGlyph.astro';
+import { families } from '../../data/profile';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const projets = (await getCollection('projets')).sort((a, b) => a.data.ordre - b.data.ordre);
+  return projets.map((projet, index) => ({
+    params: { slug: projet.id },
+    props: {
+      projet,
+      precedent: projets[index - 1],
+      suivant: projets[index + 1],
+    },
+  }));
+}
+
+interface Props {
+  projet: CollectionEntry<'projets'>;
+  precedent?: CollectionEntry<'projets'>;
+  suivant?: CollectionEntry<'projets'>;
+}
+
+// Gabarit commun à toutes les fiches (voir docs/gabarit-projet.md).
+const SECTIONS = [
+  {
+    id: 'contexte-et-probleme',
+    titre: 'Contexte et problème',
+    aide: 'La question métier ou scientifique, et pourquoi elle compte.',
+  },
+  { id: 'donnees', titre: 'Données', aide: 'Sources, volume, qualité, nettoyage et biais identifiés.' },
+  {
+    id: 'approche',
+    titre: 'Approche',
+    aide: 'La démarche pas à pas, de l’exploration au modèle ou au tableau de bord.',
+  },
+  {
+    id: 'choix-techniques',
+    titre: 'Choix techniques',
+    aide: 'Pourquoi cet outil plutôt qu’un autre, alternatives écartées et compromis.',
+  },
+  {
+    id: 'resultats-et-metriques',
+    titre: 'Résultats et métriques',
+    aide: 'Métriques d’évaluation, comparaison à une référence, lecture métier.',
+  },
+  {
+    id: 'limites-et-pistes',
+    titre: 'Limites et pistes d’amélioration',
+    aide: 'Ce que le projet ne montre pas encore et la suite envisagée.',
+  },
+];
+
+const { projet, precedent, suivant } = Astro.props;
+const { data } = projet;
+const { Content, headings } = await render(projet);
+const hasContent = Boolean(projet.body?.trim());
+const enCours = data.statut === 'en-cours';
+const color = families[data.famille].color;
+const numero = String(data.ordre).padStart(2, '0');
+const sommaire = hasContent
+  ? headings.filter((heading) => heading.depth === 2).map((heading) => ({ id: heading.slug, titre: heading.text }))
+  : SECTIONS;
+const liens = [
+  { label: 'GitHub', href: data.liens.github },
+  { label: 'Démo', href: data.liens.demo },
+  { label: 'Notebook', href: data.liens.notebook },
+];
+---
+
+<Base title={`${data.titre}, projet ${numero}, Yasmina Saoud`} description={data.resume}>
+  <article class="mx-auto max-w-7xl px-5 pt-10 pb-10 md:px-8 md:pt-14">
+    <a href={url('#projets')} class="mono-label link-underline !text-ink">
+      ← Tous les projets
+    </a>
+
+    <header class="mt-10">
+      <div class="mono-label flex items-center gap-4" data-hero-fade>
+        <span>
+          <span style={`color:${color}`}>FIG. P.{numero}</span> / {data.categorie}
+        </span>
+        <span class="h-px flex-1 bg-rule" aria-hidden="true"></span>
+      </div>
+      <div class="ticks mt-2 opacity-70" aria-hidden="true"></div>
+      <h1 class="display mt-8 max-w-5xl text-[clamp(2.8rem,8vw,6.5rem)]" data-hero-fade>
+        {data.titre}
+      </h1>
+      <p class="mt-6 max-w-3xl text-lg text-ink-2 md:text-xl" data-hero-fade>
+        {data.resume}
+      </p>
+      {enCours && (
+        <p
+          class="mono-label mt-6 inline-flex items-center gap-2 border border-amber px-3 py-2 !text-ink"
+          data-hero-fade
+        >
+          <span class="status-dot" aria-hidden="true" />
+          En cours de réalisation
+        </p>
+      )}
+    </header>
+
+    <div class="mt-14 grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-8">
+        <figure data-reveal>
+          <div class="brackets border border-rule bg-paper-2">
+            {data.teaser ? (
+              <video class="aspect-video w-full" controls preload="none" playsinline>
+                <source src={url(data.teaser)} type="video/mp4" />
+              </video>
+            ) : (
+              <div class="relative grid aspect-video place-items-center overflow-hidden">
+                <div class="absolute inset-0 p-6 opacity-50 md:p-12">
+                  <ProjectGlyph motif={data.motif} color={color} seed={data.ordre} />
+                </div>
+                <p class="mono-label relative border border-rule bg-paper px-4 py-2 !text-ink">Teaser vidéo à venir</p>
+              </div>
+            )}
+          </div>
+          <figcaption class="mono-label mt-4">Fig. P.{numero}. Teaser du projet</figcaption>
+        </figure>
+
+        {data.metriques.length > 0 && (
+          <dl class="mt-12 grid grid-cols-2 border-t border-l border-rule md:grid-cols-3" data-reveal>
+            {data.metriques.map((metrique) => (
+              <div class="flex flex-col border-r border-b border-rule p-5">
+                <dt class="order-2 mt-2 text-sm text-ink-2">{metrique.label}</dt>
+                <dd class="display order-1 text-4xl">{metrique.valeur}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {hasContent ? (
+          <div class="prose-projet mt-4">
+            <Content />
+          </div>
+        ) : (
+          <div class="mt-4">
+            {SECTIONS.map((section, index) => (
+              <section aria-labelledby={section.id} class="mt-12" data-reveal>
+                <p class="mono-label">{String(index + 1).padStart(2, '0')}</p>
+                <h2 id={section.id} class="mt-2 font-display text-[clamp(1.6rem,3vw,2.2rem)] font-bold tracking-tight">
+                  {section.titre}
+                </h2>
+                <div class="mt-4 border border-dashed border-rule p-5">
+                  <p class="text-ink-2">{section.aide}</p>
+                  <p class="mono-label mt-3 flex items-center gap-2 !text-ink">
+                    <span class="status-dot" aria-hidden="true" />
+                    En cours de réalisation
+                  </p>
+                </div>
+              </section>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <aside class="lg:col-span-4" aria-label="Informations du projet">
+        <div class="space-y-8 border-t border-ink pt-6 lg:sticky lg:top-24">
+          <div>
+            <h2 class="mono-label">Statut</h2>
+            <p class="mt-2 font-medium">{enCours ? 'En cours de réalisation' : 'Fiche complète'}</p>
+          </div>
+          <div>
+            <h2 class="mono-label">Stack utilisée</h2>
+            {data.stack.length > 0 ? (
+              <ul class="mt-3 flex flex-wrap gap-1.5">
+                {data.stack.map((outil) => (
+                  <li class="chip">{outil}</li>
+                ))}
+              </ul>
+            ) : (
+              <p class="mt-2 text-ink-2">Précisée à la publication du projet.</p>
+            )}
+          </div>
+          <div>
+            <h2 class="mono-label">Liens</h2>
+            <ul class="mt-3 divide-y divide-rule border-y border-rule">
+              {liens.map((lien) => (
+                <li>
+                  {lien.href ? (
+                    <a
+                      href={lien.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-between py-3 font-medium hover:text-signal"
+                    >
+                      {lien.label}
+                      <span aria-hidden="true">↗</span>
+                      <span class="sr-only">(nouvel onglet)</span>
+                    </a>
+                  ) : (
+                    <span class="flex items-center justify-between py-3 text-ink-2">
+                      {lien.label}
+                      <span class="mono-label">À venir</span>
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {sommaire.length > 0 && (
+            <nav aria-label="Sommaire du projet">
+              <h2 class="mono-label">Sommaire</h2>
+              <ol class="mt-3 space-y-2">
+                {sommaire.map((entree, index) => (
+                  <li>
+                    <a href={`#${entree.id}`} class="grid grid-cols-[2rem_1fr] hover:text-signal">
+                      <span class="mono-label">{String(index + 1).padStart(2, '0')}</span>
+                      <span>{entree.titre}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+        </div>
+      </aside>
+    </div>
+
+    <nav aria-label="Autres projets" class="mt-24 grid border-y border-ink sm:grid-cols-2">
+      {precedent ? (
+        <a href={url(`projets/${precedent.id}/`)} class="group py-6 hover:text-signal sm:pr-6">
+          <span class="mono-label">← Projet précédent</span>
+          <span class="mt-2 block font-display text-2xl font-bold">{precedent.data.titre}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {suivant && (
+        <a
+          href={url(`projets/${suivant.id}/`)}
+          class="group border-t border-rule py-6 text-right hover:text-signal sm:border-t-0 sm:border-l sm:pl-6"
+        >
+          <span class="mono-label">Projet suivant →</span>
+          <span class="mt-2 block font-display text-2xl font-bold">{suivant.data.titre}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Base>

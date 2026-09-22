@@ -1,0 +1,147 @@
+---
+import SectionHead from './SectionHead.astro';
+import { families, timeline } from '../data/profile';
+
+const { start, end, rows, milestones, certifications } = timeline;
+const span = end - start;
+const toPercent = (year: number) => `${(((year - start) / span) * 100).toFixed(2)}%`;
+const years = Array.from({ length: span + 1 }, (_, index) => start + index);
+
+const now = new Date();
+const today = now.getFullYear() + now.getMonth() / 12;
+const todayLabel = now.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+const experiences = rows.filter((row) => row.points.length > 0).reverse();
+---
+
+<section id="parcours" aria-labelledby="parcours-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+  <SectionHead
+    id="parcours-titre"
+    fig="04"
+    label="Parcours"
+    title="Sept ans en diagramme de Gantt."
+    intro="Études, alternance et freelance se sont superposés : c'est ce chevauchement qui a construit un profil à la fois technique et orienté métier."
+  />
+
+  <figure>
+    <div class="grid md:grid-cols-[18rem_1fr] md:gap-6">
+      <div class="hidden md:block" aria-hidden="true"></div>
+      <div class="relative h-6" aria-hidden="true">
+        {years.map((year) => (
+          <span
+            class="mono-label absolute -translate-x-1/2 !text-[0.65rem] first:translate-x-0 last:-translate-x-full md:!text-xs"
+            style={`left:${toPercent(year)}`}
+          >
+            <span class="md:hidden">'{String(year).slice(2)}</span>
+            <span class="hidden md:inline">{year}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <ol class="border-t border-ink">
+      {rows.map((row) => (
+        <li class="grid gap-2 border-b border-rule py-4 md:grid-cols-[18rem_1fr] md:items-center md:gap-6" data-reveal>
+          <div>
+            <p class="font-medium leading-snug">{row.title}</p>
+            <p class="mono-label mt-1 !normal-case !tracking-normal">
+              {row.org} · {row.dates}
+            </p>
+          </div>
+          <div class="relative h-9 self-stretch" aria-hidden="true">
+            {years.map((year) => (
+              <span class="absolute inset-y-0 w-px bg-rule/60" style={`left:${toPercent(year)}`} />
+            ))}
+            <span
+              class="absolute inset-y-0 w-px border-l border-dashed border-signal"
+              style={`left:${toPercent(today)}`}
+            />
+            <span
+              class="absolute top-1/2 h-3.5 -translate-y-1/2 origin-left"
+              style={`left:${toPercent(row.from)};width:calc(${toPercent(row.to)} - ${toPercent(row.from)});background:${families[row.family].color}`}
+              data-bar
+            />
+          </div>
+        </li>
+      ))}
+      <li class="grid gap-2 border-b border-rule py-4 md:grid-cols-[18rem_1fr] md:items-center md:gap-6" data-reveal>
+        <div>
+          <p class="font-medium leading-snug">Jalons</p>
+          <p class="mono-label mt-1 !normal-case !tracking-normal">Concours et certification</p>
+        </div>
+        <div class="relative h-9 self-stretch" aria-hidden="true">
+          {years.map((year) => (
+            <span class="absolute inset-y-0 w-px bg-rule/60" style={`left:${toPercent(year)}`} />
+          ))}
+          <span
+            class="absolute inset-y-0 w-px border-l border-dashed border-signal"
+            style={`left:${toPercent(today)}`}
+          />
+          {milestones.map((milestone) => (
+            <span
+              class="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-ink"
+              style={`left:${toPercent(milestone.at)}`}
+            />
+          ))}
+        </div>
+      </li>
+    </ol>
+
+    <figcaption class="mono-label mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+      <span class="flex items-center gap-2">
+        <span class="inline-block h-3 w-px border-l border-dashed border-signal" aria-hidden="true"></span>
+        Aujourd'hui ({todayLabel})
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="inline-block size-2.5 rotate-45 bg-ink" aria-hidden="true"></span>
+        Jalon
+      </span>
+      <span>Fig. 04. Chronologie 2019 à 2026, durées à l'échelle</span>
+    </figcaption>
+  </figure>
+
+  <div class="mt-16 grid gap-12 lg:grid-cols-12">
+    <div class="space-y-10 lg:col-span-8">
+      {experiences.map((row) => (
+        <article data-reveal>
+          <p class="mono-label">
+            <span style={`color:${families[row.family].color}`}>■</span> {row.dates}
+          </p>
+          <h3 class="mt-2 font-display text-2xl font-bold tracking-tight md:text-3xl">{row.title}</h3>
+          <p class="text-ink-2">{row.org}</p>
+          <ul class="mt-4 space-y-2">
+            {row.points.map((point) => (
+              <li class="grid grid-cols-[1.25rem_1fr]">
+                <span class="text-signal" aria-hidden="true">
+                  +
+                </span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+
+    <aside class="lg:col-span-4" aria-label="Jalons et certifications">
+      <div class="border border-rule p-6" data-reveal>
+        <h3 class="mono-label">Jalons</h3>
+        <ul class="mt-4 space-y-4">
+          {milestones.map((milestone) => (
+            <li>
+              <p class="font-display text-xl font-bold leading-tight">{milestone.label}</p>
+              <p class="mono-label mt-1">{milestone.date}</p>
+            </li>
+          ))}
+          {certifications.map((certification) => (
+            <li>
+              <p class="font-display text-xl font-bold leading-tight">{certification.label}</p>
+              <p class="mono-label mt-1">
+                Certification {certification.issuer} · {certification.date}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,67 @@
+---
+import SectionHead from './SectionHead.astro';
+import { cvFiles, person } from '../data/profile';
+import { url } from '../lib/url';
+
+const profiles = [
+  { label: 'LinkedIn', href: person.linkedin, handle: 'yasmina-saoud' },
+  { label: 'GitHub', href: person.github, handle: 'yzasmin' },
+];
+---
+
+<section id="contact" aria-labelledby="contact-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+  <SectionHead
+    id="contact-titre"
+    fig="05"
+    label="Contact"
+    title="Parlons de vos données."
+    intro={`Je cherche un poste en data science, analyse ou data engineering dans la région de Montpellier et Béziers. Disponible à partir d'${person.availability.toLowerCase()}.`}
+  />
+
+  <a href={`mailto:${person.email}`} class="group block border-y border-ink py-8 md:py-10" data-reveal>
+    <span class="mono-label">Écrire un email</span>
+    <span class="mt-3 flex items-center justify-between gap-6 font-display text-[clamp(1.35rem,5.2vw,4.25rem)] font-extrabold tracking-tight break-all transition-colors group-hover:text-signal">
+      {person.email}
+      <span aria-hidden="true" class="hidden shrink-0 transition-transform group-hover:translate-x-2 sm:inline">
+        →
+      </span>
+    </span>
+  </a>
+
+  <div class="grid border-b border-rule md:grid-cols-3">
+    {profiles.map((profile) => (
+      <a
+        href={profile.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group border-b border-rule py-6 transition-colors hover:bg-paper-2 md:border-r md:border-b-0 md:px-6 md:first:pl-0"
+        data-reveal
+      >
+        <span class="mono-label">{profile.label}</span>
+        <span class="mt-2 flex items-center justify-between font-display text-2xl font-bold">
+          {profile.handle}
+          <span aria-hidden="true" class="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1">
+            ↗
+          </span>
+        </span>
+        <span class="sr-only">(nouvel onglet)</span>
+      </a>
+    ))}
+    <div class="py-6 md:px-6" data-reveal>
+      <span class="mono-label">CV à télécharger (PDF)</span>
+      <ul class="mt-3 flex flex-wrap gap-2">
+        {cvFiles.map((cv) => (
+          <li>
+            <a href={url(cv.file)} download class="chip hover:!border-ink">
+              <span aria-hidden="true">↓</span> {cv.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <p class="mono-label mt-6">
+    {person.location} · {person.languages}
+  </p>
+</section>

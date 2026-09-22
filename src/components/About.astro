@@ -1,0 +1,44 @@
+---
+import SectionHead from './SectionHead.astro';
+import { about, softSkills, stats } from '../data/profile';
+---
+
+<section id="a-propos" aria-labelledby="a-propos-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+  <SectionHead id="a-propos-titre" fig="01" label="À propos" title="Des données à la décision." />
+
+  <div class="grid gap-14 lg:grid-cols-12">
+    <div class="space-y-5 text-lg leading-relaxed lg:col-span-6">
+      {about.map((paragraph) => (
+        <p data-reveal>{paragraph}</p>
+      ))}
+    </div>
+
+    <div class="lg:col-span-6">
+      <dl class="grid grid-cols-2 border-t border-l border-rule">
+        {stats.map((stat, index) => (
+          <div class="relative flex flex-col border-r border-b border-rule p-5 md:p-7" data-reveal>
+            <span class="mono-label absolute top-3 right-4 !normal-case">n.{index + 1}</span>
+            <dt class="order-2 mt-3 text-sm leading-snug text-ink-2">{stat.label}</dt>
+            <dd class="display order-1 text-[clamp(2.8rem,6vw,4.5rem)] text-ink">
+              {stat.prefix}
+              <span data-count={stat.value}>{stat.value}</span>
+              <span class="text-signal">{stat.suffix}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="mt-10" data-reveal>
+        <h3 class="mono-label">Savoir-être</h3>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {softSkills.map((skill, index) => (
+            <li class="chip">
+              <span class="text-ink-2">{String(index + 1).padStart(2, '0')}</span>
+              {skill}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

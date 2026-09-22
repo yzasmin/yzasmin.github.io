@@ -1,0 +1,178 @@
+---
+// Petite figure SVG générée de façon déterministe, propre à chaque type de projet.
+type Motif = 'poster' | 'scatter' | 'bars' | 'pipeline' | 'graph' | 'histogram';
+
+interface Props {
+  motif: Motif;
+  color: string;
+  seed: number;
+}
+
+const { motif, color, seed } = Astro.props;
+
+// Générateur pseudo-aléatoire à graine (LCG) : même figure à chaque build.
+let state = seed * 9301 + 49297;
+const random = () => {
+  state = (state * 9301 + 49297) % 233280;
+  return state / 233280;
+};
+
+const W = 240;
+const H = 140;
+const PAD = 16;
+const round = (value: number) => Math.round(value * 10) / 10;
+
+const scatterPoints = Array.from({ length: 46 }, (_, index) => {
+  const cluster = index % 3;
+  const centers = [
+    [70, 50],
+    [160, 40],
+    [120, 100],
+  ];
+  const [cx, cy] = centers[cluster];
+  return { x: round(cx + (random() - 0.5) * 60), y: round(cy + (random() - 0.5) * 40), cluster };
+});
+
+const barValues = Array.from({ length: 12 }, () => 0.2 + random() * 0.8);
+const histogramValues = Array.from({ length: 18 }, (_, index) => {
+  const z = (index - 8.5) / 3.6;
+  return Math.exp(-z * z) * (0.85 + random() * 0.15);
+});
+const graphNodes = Array.from({ length: 9 }, (_, index) => ({
+  x: round(PAD + 20 + random() * (W - 2 * PAD - 40)),
+  y: round(PAD + 10 + random() * (H - 2 * PAD - 20)),
+  hub: index === 0,
+}));
+const pipelineStages = ['ingest', 'clean', 'model', 'serve'];
+---
+
+<svg viewBox={`0 0 ${W} ${H}`} class="h-full w-full" aria-hidden="true" focusable="false">
+  <g stroke="var(--rule)" stroke-width="1">
+    <line x1={PAD} y1={H - PAD} x2={W - PAD} y2={H - PAD}></line>
+    <line x1={PAD} y1={PAD} x2={PAD} y2={H - PAD}></line>
+  </g>
+
+  {motif === 'scatter' &&
+    scatterPoints.map((point) => (
+      <circle
+        cx={point.x}
+        cy={point.y}
+        r="3"
+        fill={point.cluster === 0 ? color : 'var(--ink-2)'}
+        opacity={point.cluster === 0 ? 1 : 0.45}
+      />
+    ))}
+
+  {motif === 'bars' &&
+    barValues.map((value, index) => {
+      const barWidth = (W - 2 * PAD - 20) / barValues.length;
+      const barHeight = value * (H - 2 * PAD - 10);
+      return (
+        <rect
+          x={round(PAD + 10 + index * barWidth)}
+          y={round(H - PAD - barHeight)}
+          width={round(barWidth - 4)}
+          height={round(barHeight)}
+          fill={index === 8 ? color : 'var(--ink-2)'}
+          opacity={index === 8 ? 1 : 0.35}
+        />
+      );
+    })}
+
+  {motif === 'histogram' && (
+    <>
+      {histogramValues.map((value, index) => {
+        const binWidth = (W - 2 * PAD - 20) / histogramValues.length;
+        const binHeight = value * (H - 2 * PAD - 12);
+        return (
+          <rect
+            x={round(PAD + 10 + index * binWidth)}
+            y={round(H - PAD - binHeight)}
+            width={round(binWidth - 1)}
+            height={round(binHeight)}
+            fill="var(--ink-2)"
+            opacity="0.35"
+          />
+        );
+      })}
+      <path
+        d={histogramValues
+          .map((value, index) => {
+            const binWidth = (W - 2 * PAD - 20) / histogramValues.length;
+            const x = round(PAD + 10 + index * binWidth + binWidth / 2);
+            const y = round(H - PAD - value * (H - 2 * PAD - 12));
+            return `${index === 0 ? 'M' : 'L'}${x} ${y}`;
+          })
+          .join(' ')}
+        fill="none"
+        stroke={color}
+        stroke-width="2"
+      />
+    </>
+  )}
+
+  {motif === 'graph' && (
+    <>
+      {graphNodes.slice(1).map((node) => (
+        <line x1={graphNodes[0].x} y1={graphNodes[0].y} x2={node.x} y2={node.y} stroke="var(--ink-2)" opacity="0.4" />
+      ))}
+      {graphNodes.map((node) => (
+        <circle
+          cx={node.x}
+          cy={node.y}
+          r={node.hub ? 7 : 4}
+          fill={node.hub ? color : 'var(--paper)'}
+          stroke={node.hub ? color : 'var(--ink-2)'}
+          stroke-width="1.5"
+        />
+      ))}
+    </>
+  )}
+
+  {motif === 'pipeline' &&
+    pipelineStages.map((stage, index) => {
+      const step = (W - 2 * PAD - 20) / pipelineStages.length;
+      const x = PAD + 10 + index * step;
+      return (
+        <g>
+          <rect
+            x={round(x)}
+            y="50"
+            width={round(step - 14)}
+            height="36"
+            fill="none"
+            stroke={index === 2 ? color : 'var(--ink-2)'}
+            stroke-width="1.5"
+          />
+          <text
+            x={round(x + (step - 14) / 2)}
+            y="72"
+            text-anchor="middle"
+            font-family="var(--font-mono)"
+            font-size="8"
+            fill={index === 2 ? color : 'var(--ink-2)'}
+          >
+            {stage}
+          </text>
+          {index < pipelineStages.length - 1 && (
+            <path d={`M${round(x + step - 14)} 68 h12`} stroke="var(--ink-2)" stroke-width="1.5" />
+          )}
+        </g>
+      );
+    })}
+
+  {motif === 'poster' && (
+    <g>
+      <rect x="80" y={PAD} width="80" height={H - 2 * PAD} fill="none" stroke="var(--ink-2)" stroke-width="1.5" />
+      <rect x="88" y={PAD + 8} width="64" height="8" fill={color} />
+      {[0, 1, 2, 3].map((line) => (
+        <rect x="88" y={PAD + 24 + line * 7} width={line % 2 ? 44 : 60} height="3" fill="var(--ink-2)" opacity="0.5" />
+      ))}
+      <rect x="88" y={PAD + 56} width="30" height="30" fill="none" stroke={color} stroke-width="1.5" />
+      <rect x="122" y={PAD + 56} width="30" height="30" fill="var(--ink-2)" opacity="0.25" />
+      {[0, 1].map((line) => (
+        <rect x="88" y={PAD + 94 + line * 7} width={line ? 40 : 60} height="3" fill="var(--ink-2)" opacity="0.5" />
+      ))}
+    </g>
+  )}
+</svg>

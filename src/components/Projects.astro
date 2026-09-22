@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHead from './SectionHead.astro';
+import ProjectGlyph from './ProjectGlyph.astro';
+import { families } from '../data/profile';
+import { url } from '../lib/url';
+
+const projets = (await getCollection('projets')).sort((a, b) => a.data.ordre - b.data.ordre);
+---
+
+<section id="projets" aria-labelledby="projets-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+  <SectionHead
+    id="projets-titre"
+    fig="03"
+    label="Projets"
+    title="Six figures, six méthodes."
+    intro="Chaque fiche suit le même protocole : contexte, données, approche, choix techniques justifiés, résultats, limites. Ouvrez-les pour juger du détail."
+  />
+
+  <ol class="grid gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-3">
+    {projets.map((projet) => {
+      const color = families[projet.data.famille].color;
+      const numero = String(projet.data.ordre).padStart(2, '0');
+      return (
+        <li class="bg-paper" data-reveal>
+          <a
+            href={url(`projets/${projet.id}/`)}
+            class="group flex h-full flex-col p-6 transition-colors hover:bg-paper-2 focus-visible:bg-paper-2 md:p-7"
+          >
+            <div class="flex items-center justify-between">
+              <span class="mono-label">
+                <span style={`color:${color}`}>P.{numero}</span> / {projet.data.categorie}
+              </span>
+            </div>
+            <div class="mt-5 aspect-[12/7] border border-rule bg-paper p-2 transition-transform duration-500 group-hover:-translate-y-1">
+              <ProjectGlyph motif={projet.data.motif} color={color} seed={projet.data.ordre} />
+            </div>
+            <h3 class="mt-6 font-display text-2xl font-bold leading-tight tracking-tight md:text-[1.7rem]">
+              {projet.data.titre}
+            </h3>
+            <p class="mt-3 flex-1 text-ink-2">{projet.data.resume}</p>
+            <div class="mt-6 flex items-center justify-between border-t border-rule pt-4">
+              {projet.data.statut === 'en-cours' ? (
+                <span class="mono-label flex items-center gap-2 !text-ink">
+                  <span class="status-dot" aria-hidden="true" />
+                  En cours de réalisation
+                </span>
+              ) : (
+                <span class="mono-label flex items-center gap-2 !text-ink">
+                  <span class="dot bg-teal" aria-hidden="true" />
+                  Fiche complète
+                </span>
+              )}
+              <span class="mono-label !text-ink transition-transform group-hover:translate-x-1" aria-hidden="true">
+                Ouvrir →
+              </span>
+            </div>
+          </a>
+        </li>
+      );
+    })}
+  </ol>
+</section>

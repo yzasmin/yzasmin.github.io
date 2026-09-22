@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+
+<Base title="Page introuvable, Yasmina Saoud">
+  <section class="mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-36">
+    <p class="mono-label">
+      <span class="text-signal">ERREUR 404</span> / Valeur manquante
+    </p>
+    <h1 class="display mt-6 text-[clamp(3.5rem,12vw,9rem)]">NaN.</h1>
+    <p class="mt-6 max-w-xl text-lg text-ink-2">
+      Cette page n'existe pas dans le jeu de données. Elle a peut-être été déplacée ou supprimée.
+    </p>
+    <a href={url()} class="btn btn-primary mt-10">
+      Retour à l'accueil
+    </a>
+  </section>
+</Base>
