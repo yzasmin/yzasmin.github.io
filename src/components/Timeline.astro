@@ -31,8 +31,8 @@ const experiences = rows.filter((row) => row.points.length > 0).reverse();
             class="mono-label absolute -translate-x-1/2 !text-[0.65rem] first:translate-x-0 last:-translate-x-full md:!text-xs"
             style={`left:${toPercent(year)}`}
           >
-            <span class="md:hidden">'{String(year).slice(2)}</span>
-            <span class="hidden md:inline">{year}</span>
+            <span class="lg:hidden">'{String(year).slice(2)}</span>
+            <span class="hidden lg:inline">{year}</span>
           </span>
         ))}
       </div>
@@ -89,7 +89,7 @@ const experiences = rows.filter((row) => row.points.length > 0).reverse();
     <figcaption class="mono-label mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
       <span class="flex items-center gap-2">
         <span class="inline-block h-3 w-px border-l border-dashed border-signal" aria-hidden="true"></span>
-        Aujourd'hui ({todayLabel})
+        Situation au {todayLabel}
       </span>
       <span class="flex items-center gap-2">
         <span class="inline-block size-2.5 rotate-45 bg-ink" aria-hidden="true"></span>

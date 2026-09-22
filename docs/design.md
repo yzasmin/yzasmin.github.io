@@ -19,8 +19,8 @@ ce qu'elle maîtrise (stack par catégorie), preuves (chiffres, projets ouvrable
 | --ink-2   | #4A4F57 | #A3A8B0 | texte secondaire                         |
 | --rule    | #C9C4B6 | #2A2F37 | filets, grille                           |
 | --signal  | #C2185B | #FF5C8F | accent principal (magenta, repris du CV) |
-| --teal    | #0B7A6E | #3FD1BE | série 2                                  |
-| --amber   | #9A5B00 | #F2B84B | série 3                                  |
+| --teal    | #096B61 | #3FD1BE | série 2                                  |
+| --amber   | #874F00 | #F2B84B | série 3                                  |
 | --indigo  | #3949AB | #8C9EFF | série 4                                  |
 
 ## Typographie

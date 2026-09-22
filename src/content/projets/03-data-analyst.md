@@ -4,7 +4,7 @@ titre: 'Projet Data Analyst'
 ordre: 3
 categorie: 'Analyse et BI'
 famille: analyse
-resume: 'Des données brutes à la décision : indicateurs définis avec le métier, tableau de bord et recommandations argumentées.'
+resume: 'Objectif : passer de données brutes à une décision, avec des indicateurs définis, un tableau de bord et des recommandations.'
 statut: en-cours
 motif: bars
 ---

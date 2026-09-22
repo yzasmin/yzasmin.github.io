@@ -160,7 +160,7 @@ export const timeline = {
 };
 
 export const cvFiles = [
-  { label: 'Data Scientist', file: 'cv/CV-Yasmina-Saoud-Data-Scientist.pdf' },
-  { label: 'Data Analyst', file: 'cv/CV-Yasmina-Saoud-Data-Analyst.pdf' },
+  { label: 'Data Scientist / Data Analyst', file: 'cv/CV-Yasmina-Saoud-Data-Scientist.pdf' },
+  { label: 'Data Analyst BI', file: 'cv/CV-Yasmina-Saoud-Data-Analyst.pdf' },
   { label: 'Data Engineer', file: 'cv/CV-Yasmina-Saoud-Data-Engineer.pdf' },
 ];

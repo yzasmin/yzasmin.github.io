@@ -12,17 +12,18 @@ const links = [
 
 <header class="sticky top-0 z-50 border-b border-rule/70 bg-paper/80 backdrop-blur-md supports-[backdrop-filter]:bg-paper/65">
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 md:px-8">
-    <a href={url()} class="group flex items-center gap-3" aria-label="Yasmina Saoud, accueil">
+    <a href={url()} class="group flex items-center gap-3">
       <span
         aria-hidden="true"
         class="grid size-9 place-items-center border border-ink font-display text-sm font-extrabold transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-paper"
       >
         YS
       </span>
-      <span class="hidden font-display text-lg font-bold tracking-tight sm:inline">Yasmina Saoud</span>
+      <span class="sr-only font-display text-lg font-bold tracking-tight sm:not-sr-only">Yasmina Saoud</span>
+      <span class="sr-only">, accueil</span>
     </a>
 
-    <nav aria-label="Navigation principale" class="hidden md:block">
+    <nav aria-label="Navigation principale" class="hidden lg:block">
       <ul class="flex items-center gap-7">
         {links.map((link, index) => (
           <li>
@@ -51,7 +52,7 @@ const links = [
         data-menu-toggle
         aria-expanded="false"
         aria-controls="menu-mobile"
-        class="grid size-10 place-items-center border border-rule md:hidden"
+        class="grid size-10 place-items-center border border-rule lg:hidden"
       >
         <span class="sr-only">Ouvrir le menu</span>
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -61,7 +62,7 @@ const links = [
     </div>
   </div>
 
-  <nav id="menu-mobile" aria-label="Navigation mobile" class="hidden border-t border-rule md:hidden" data-menu>
+  <nav id="menu-mobile" aria-label="Navigation mobile" class="hidden border-t border-rule lg:hidden" data-menu>
     <ul class="mx-auto max-w-7xl px-5 py-3">
       {links.map((link, index) => (
         <li>
@@ -86,6 +87,7 @@ const links = [
     themeButton?.setAttribute('aria-label', `Passer au thème ${next}`);
   };
   syncThemeButton();
+  prefersDark.addEventListener('change', syncThemeButton);
 
   themeButton?.addEventListener('click', () => {
     const next = currentTheme() === 'dark' ? 'light' : 'dark';

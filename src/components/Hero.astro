@@ -47,23 +47,22 @@ const facts = [
         ))}
       </ul>
 
-      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-2 md:text-xl" data-hero-fade>
-        {person.pitch}
-      </p>
+      <!-- Pas d'animation ici : ce paragraphe est l'élément LCP, il doit s'afficher sans attendre le JavaScript. -->
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-2 md:text-xl">{person.pitch}</p>
 
       <div class="mt-9 flex flex-wrap items-center gap-3" data-hero-fade>
         <a href={url('#projets')} class="btn btn-primary">
           Voir les projets
           <span aria-hidden="true">↓</span>
         </a>
-        <details class="group relative">
+        <details class="group relative" data-cv-menu>
           <summary class="btn btn-ghost cursor-pointer list-none [&::-webkit-details-marker]:hidden">
             Télécharger le CV
             <span aria-hidden="true" class="transition-transform group-open:rotate-180">
               ▾
             </span>
           </summary>
-          <ul class="absolute left-0 z-20 mt-2 w-64 border border-ink bg-paper p-1 shadow-[6px_6px_0_var(--rule)]">
+          <ul class="absolute left-0 z-20 mt-2 w-80 max-w-[calc(100vw-2.5rem)] border border-ink bg-paper p-1 shadow-[6px_6px_0_var(--rule)]">
             {cvFiles.map((cv) => (
               <li>
                 <a
@@ -103,7 +102,7 @@ const facts = [
             aria-label="Vidéo d'introduction animée : nuage de points qui se regroupe en trois domaines, Data Science, Data Analysis et Data Engineering, puis le nom Yasmina Saoud et trois faits clés."
           >
             <source src={url('video/intro.webm')} type="video/webm" />
-          <source src={url('video/intro.mp4')} type="video/mp4" />
+            <source src={url('video/intro.mp4')} type="video/mp4" />
           </video>
         </div>
         <figcaption class="mono-label mt-4 flex items-center justify-between gap-4">
@@ -133,6 +132,19 @@ const facts = [
     toggle.textContent = playing ? 'Pause' : 'Lire';
     toggle.setAttribute('aria-pressed', String(playing));
   };
+
+  const cvMenu = document.querySelector<HTMLDetailsElement>('[data-cv-menu]');
+  const closeCvMenu = (returnFocus: boolean) => {
+    if (!cvMenu?.open) return;
+    cvMenu.open = false;
+    if (returnFocus) cvMenu.querySelector('summary')?.focus();
+  };
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeCvMenu(true);
+  });
+  document.addEventListener('click', (event) => {
+    if (cvMenu && !cvMenu.contains(event.target as Node)) closeCvMenu(false);
+  });
 
   if (video && toggle) {
     video.addEventListener('play', render);
