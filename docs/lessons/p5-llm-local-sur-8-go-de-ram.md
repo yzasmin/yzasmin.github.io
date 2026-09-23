@@ -5,9 +5,9 @@ Sur un poste à 8 Go de RAM, un modèle de 3 milliards de paramètres pagine (3,
 **Mesures faites sur le poste (Ollama 0.34.3, processeur, GPU MX350 de 2 Go inutilisable pour ces
 modèles), même invite de 791 jetons :**
 
-| Modèle                         | Taille | Lecture de l'invite | Génération |
-| ------------------------------ | ------ | ------------------- | ---------- |
-| `qwen2.5:3b-instruct-q4_K_M`   | 1,9 Go | 11 jetons/s         | 3,6 jetons/s |
+| Modèle                         | Taille | Lecture de l'invite | Génération    |
+| ------------------------------ | ------ | ------------------- | ------------- |
+| `qwen2.5:3b-instruct-q4_K_M`   | 1,9 Go | 11 jetons/s         | 3,6 jetons/s  |
 | `qwen2.5:1.5b-instruct-q4_K_M` | 986 Mo | 218 jetons/s        | 10,7 jetons/s |
 | `qwen2.5:0.5b-instruct-q4_K_M` | 397 Mo | 53 jetons/s         | 11,2 jetons/s |
 

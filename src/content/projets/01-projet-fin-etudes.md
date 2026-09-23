@@ -72,24 +72,24 @@ chaque notebook définit exactement les mêmes couches que le module.
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
-| Vecteur de scène explicite (YOLO, K-means, HSV) | Un troisième CNN de contexte | Chaque dimension a un sens (un objet, une couleur), ce qui rend l'apport mesurable et interprétable |
-| Preuve de concept statistique avant l'entraînement | Ajouter la branche YOLO à l'aveugle | 654 paires sur 2 080 significatives (31,4 %, contre environ 5 % attendus par hasard) justifiaient la branche |
-| Focal Loss (γ = 2) et échantillonnage pondéré | Entropie croisée binaire simple | Compenser le déséquilibre entre Engagement et les classes rares |
-| Préchauffage à backbones gelés, puis taux d'apprentissage séparés (1e-4 tête, 1e-5 backbones) | Réglage fin de tout le réseau dès la première époque | Ne pas abîmer les poids ImageNet pendant que la tête, initialisée au hasard, apprend |
-| Même backbone et même protocole pour B+I et B+I+Y | Comparer au seul chiffre du papier | Isoler l'effet de la branche 114D (ablation) |
-| Perte VAD masquée | Remplacer les VAD manquantes par une valeur | Ne pas apprendre sur des cibles absentes |
+| Choix                                                                                         | Plutôt que                                           | Pourquoi                                                                                                     |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Vecteur de scène explicite (YOLO, K-means, HSV)                                               | Un troisième CNN de contexte                         | Chaque dimension a un sens (un objet, une couleur), ce qui rend l'apport mesurable et interprétable          |
+| Preuve de concept statistique avant l'entraînement                                            | Ajouter la branche YOLO à l'aveugle                  | 654 paires sur 2 080 significatives (31,4 %, contre environ 5 % attendus par hasard) justifiaient la branche |
+| Focal Loss (γ = 2) et échantillonnage pondéré                                                 | Entropie croisée binaire simple                      | Compenser le déséquilibre entre Engagement et les classes rares                                              |
+| Préchauffage à backbones gelés, puis taux d'apprentissage séparés (1e-4 tête, 1e-5 backbones) | Réglage fin de tout le réseau dès la première époque | Ne pas abîmer les poids ImageNet pendant que la tête, initialisée au hasard, apprend                         |
+| Même backbone et même protocole pour B+I et B+I+Y                                             | Comparer au seul chiffre du papier                   | Isoler l'effet de la branche 114D (ablation)                                                                 |
+| Perte VAD masquée                                                                             | Remplacer les VAD manquantes par une valeur          | Ne pas apprendre sur des cibles absentes                                                                     |
 
 ## Résultats et métriques
 
 Sur le test set EMOTIC (7 280 images selon le poster) :
 
-| Modèle | mAP | MAE valence | MAE arousal | Pearson valence |
-| --- | --- | --- | --- | --- |
-| Kosti et al., B+I (papier) | 27,38 % | 0,0528 | 0,0611 | |
-| B+I, notre référence | 25,11 % | 0,0968 | 0,1043 | 0,225 |
-| B+I+Y 114D | 25,60 % | 0,0980 | 0,1060 | 0,248 |
+| Modèle                     | mAP     | MAE valence | MAE arousal | Pearson valence |
+| -------------------------- | ------- | ----------- | ----------- | --------------- |
+| Kosti et al., B+I (papier) | 27,38 % | 0,0528      | 0,0611      |                 |
+| B+I, notre référence       | 25,11 % | 0,0968      | 0,1043      | 0,225           |
+| B+I+Y 114D                 | 25,60 % | 0,0980      | 0,1060      | 0,248           |
 
 La branche de scène apporte **+0,49 point de mAP** (+1,9 % relatif). Le gain existe mais reste modeste,
 et notre modèle est 1,8 point sous le papier original. Il n'est pas uniforme : Suffering, Sadness et Fatigue

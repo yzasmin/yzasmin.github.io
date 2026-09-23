@@ -4,7 +4,7 @@ titre: 'Vélos en libre-service : pipeline streaming du flux GBFS'
 ordre: 4
 categorie: 'Pipeline de données'
 famille: engineering
-resume: "Les disponibilités Vélomagg de Montpellier publiées toutes les 60 secondes, capturées en continu, dédupliquées et modélisées : Redpanda, PostgreSQL, dbt et Grafana dans un seul docker compose up."
+resume: 'Les disponibilités Vélomagg de Montpellier publiées toutes les 60 secondes, capturées en continu, dédupliquées et modélisées : Redpanda, PostgreSQL, dbt et Grafana dans un seul docker compose up.'
 statut: publie
 motif: pipeline
 stack: ['Python', 'Redpanda', 'PostgreSQL', 'dbt', 'Docker Compose', 'Grafana']
@@ -71,14 +71,14 @@ Grafana est provisionné par fichiers : source de données et tableau de bord so
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
-| Redpanda en mode dev | Kafka avec KRaft ou ZooKeeper | Même protocole client, un seul binaire, démarre avec `--smp 1 --memory 512M` : indispensable sur un poste de 8 Go où le compose doit aussi loger PostgreSQL, dbt et Grafana |
-| Clé unique en base plus validation tardive des décalages | Recherche d'un « exactement une fois » applicatif | Le doublon est écarté par la base, le compteur le prouve, et une panne du consommateur n'entraîne aucune perte ni double écriture |
-| dbt | Vues SQL écrites à la main | Graphe de dépendances explicite, tests déclaratifs versionnés avec les modèles, table de faits incrémentale qui ne retraite que les nouvelles lignes |
-| Test générique maison `accepted_range` | Paquet `dbt_utils` | Évite un `dbt deps` au démarrage du conteneur, donc un accès réseau et un cache de plus, pour trois lignes de Jinja |
-| `clock_timestamp()` pour l'heure d'insertion | `now()` | `now()` renvoie l'heure de début de transaction : toutes les lignes d'un lot auraient la même heure et la latence mesurée serait fausse |
-| Migrations SQL versionnées avec somme de contrôle | `CREATE TABLE IF NOT EXISTS` au démarrage | L'historique du schéma est lisible, et une migration modifiée après coup est détectée au lieu d'être silencieusement ignorée |
+| Choix                                                    | Plutôt que                                        | Pourquoi                                                                                                                                                                    |
+| -------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Redpanda en mode dev                                     | Kafka avec KRaft ou ZooKeeper                     | Même protocole client, un seul binaire, démarre avec `--smp 1 --memory 512M` : indispensable sur un poste de 8 Go où le compose doit aussi loger PostgreSQL, dbt et Grafana |
+| Clé unique en base plus validation tardive des décalages | Recherche d'un « exactement une fois » applicatif | Le doublon est écarté par la base, le compteur le prouve, et une panne du consommateur n'entraîne aucune perte ni double écriture                                           |
+| dbt                                                      | Vues SQL écrites à la main                        | Graphe de dépendances explicite, tests déclaratifs versionnés avec les modèles, table de faits incrémentale qui ne retraite que les nouvelles lignes                        |
+| Test générique maison `accepted_range`                   | Paquet `dbt_utils`                                | Évite un `dbt deps` au démarrage du conteneur, donc un accès réseau et un cache de plus, pour trois lignes de Jinja                                                         |
+| `clock_timestamp()` pour l'heure d'insertion             | `now()`                                           | `now()` renvoie l'heure de début de transaction : toutes les lignes d'un lot auraient la même heure et la latence mesurée serait fausse                                     |
+| Migrations SQL versionnées avec somme de contrôle        | `CREATE TABLE IF NOT EXISTS` au démarrage         | L'historique du schéma est lisible, et une migration modifiée après coup est détectée au lieu d'être silencieusement ignorée                                                |
 
 ## Résultats et métriques
 
@@ -90,21 +90,21 @@ tâche `pipeline`, conclusion `success`. Ce run monte le compose, rejoue l'archi
 ingère le flux en direct pendant 8 minutes, exécute `dbt build` et `pytest`, puis exporte les chiffres par
 requêtes SQL. Le débit vient donc d'un rejeu d'archive ; seules les 8 minutes en direct mesurent une latence.
 
-| Mesure | Valeur | Source |
-| --- | --- | --- |
-| Messages reçus par le consommateur | 17 264 | `results/synthese.json` |
-| Relevés insérés en base | 16 848 | `results/synthese.json` |
-| Doublons écartés par la clé unique | 52 | `results/synthese.json` |
-| Messages invalides (schéma) | 0 | `results/synthese.json` |
-| Latence de bout en bout en direct (p50 / p95) | 38,44 s / 40,99 s | `results/latence.json` |
-| Latence du pipeline seul en direct (p50 / p95) | 2,879 s / 5,431 s | `results/latence.json` |
-| Âge du flux à la lecture (p50) | 34,54 s | `results/latence.json` |
-| Tests de qualité dbt | 35 réussis sur 35 (le total `PASS=42` de dbt ajoute les 7 modèles construits) | `results/dbt_build.txt` |
-| Tests unitaires Python | 22 passés | `results/pytest.txt` |
-| Relevés sans aucun vélo | 13,59 % | `results/vides_pleines_global.json` |
-| Relevés sans aucune borne libre | 0,00 % | `results/vides_pleines_global.json` |
-| Taux de remplissage moyen | 25,31 % | `results/vides_pleines_global.json` |
-| Relevés avec plus de vélos que la capacité | 0 | `results/vides_pleines_global.json` |
+| Mesure                                         | Valeur                                                                        | Source                              |
+| ---------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------- |
+| Messages reçus par le consommateur             | 17 264                                                                        | `results/synthese.json`             |
+| Relevés insérés en base                        | 16 848                                                                        | `results/synthese.json`             |
+| Doublons écartés par la clé unique             | 52                                                                            | `results/synthese.json`             |
+| Messages invalides (schéma)                    | 0                                                                             | `results/synthese.json`             |
+| Latence de bout en bout en direct (p50 / p95)  | 38,44 s / 40,99 s                                                             | `results/latence.json`              |
+| Latence du pipeline seul en direct (p50 / p95) | 2,879 s / 5,431 s                                                             | `results/latence.json`              |
+| Âge du flux à la lecture (p50)                 | 34,54 s                                                                       | `results/latence.json`              |
+| Tests de qualité dbt                           | 35 réussis sur 35 (le total `PASS=42` de dbt ajoute les 7 modèles construits) | `results/dbt_build.txt`             |
+| Tests unitaires Python                         | 22 passés                                                                     | `results/pytest.txt`                |
+| Relevés sans aucun vélo                        | 13,59 %                                                                       | `results/vides_pleines_global.json` |
+| Relevés sans aucune borne libre                | 0,00 %                                                                        | `results/vides_pleines_global.json` |
+| Taux de remplissage moyen                      | 25,31 %                                                                       | `results/vides_pleines_global.json` |
+| Relevés avec plus de vélos que la capacité     | 0                                                                             | `results/vides_pleines_global.json` |
 
 La latence dit l'essentiel : sur 38,4 secondes de bout en bout en médiane, 34,5 viennent de l'âge du flux
 avant même sa lecture. Tout ce que le pipeline ajoute tient sous 6 secondes au 95e centile, Redpanda,

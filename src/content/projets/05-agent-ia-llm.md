@@ -53,7 +53,8 @@ par la racinisation. Le sémantique est un index vectoriel construit avec le mod
 e5-small exporté en ONNX quantifié en entiers 8 bits, stocké dans un Qdrant en mode local sur disque. Les
 deux classements sont fusionnés par Reciprocal Rank Fusion.
 
-Au-dessus, un agent appelle deux outils via l'API Messages d'Anthropic : `rechercher_reglementation`, qui
+Au-dessus, un agent appelle deux outils, servi par un modèle ouvert exécuté en local avec Ollama :
+`rechercher_reglementation`, qui
 renvoie des passages numérotés avec leur citation, et `calculer`, une évaluation arithmétique sûre qui
 analyse l'arbre syntaxique de l'expression au lieu d'appeler `eval`. La consigne impose une citation par
 affirmation et un refus explicite quand les passages ne suffisent pas.
@@ -65,14 +66,14 @@ change, et un test vérifie que chaque phrase attendue existe bien dans le corpu
 
 ## Choix techniques
 
-| Choix                                | Plutôt que                       | Pourquoi                                                                                     |
-| ------------------------------------ | -------------------------------- | -------------------------------------------------------------------------------------------- |
-| Recherche hybride BM25 et vectoriel  | Vectoriel seul                   | Les questions reprennent les identifiants réglementaires ; mesuré, le lexical fait mieux seul |
-| e5-small ONNX quantifié int8         | Modèle d'embeddings plus grand   | 8 Go de RAM partagés, moins de 500 Mo utilisés, index construit sur CPU en 10 minutes         |
-| Qdrant en mode local sur disque      | Serveur vectoriel ou FAISS       | Index de 2,8 Mo, aucun service à lancer, un clone vierge le reconstruit                       |
-| Calculatrice par arbre syntaxique    | `eval` sur l'expression du modèle | Un outil exposé à un LLM ne doit jamais exécuter de code arbitraire                           |
-| Phrases attendues plutôt qu'identifiants | Identifiants de passages figés | Le jeu d'évaluation survit à un changement de découpage et reste vérifiable dans les textes    |
-| Agent Haiku, juge Sonnet             | Le même modèle partout           | Le modèle économique répond, un modèle plus capable juge, ce qui limite l'auto-complaisance    |
+| Choix                                    | Plutôt que                        | Pourquoi                                                                                      |
+| ---------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------- |
+| Recherche hybride BM25 et vectoriel      | Vectoriel seul                    | Les questions reprennent les identifiants réglementaires ; mesuré, le lexical fait mieux seul |
+| e5-small ONNX quantifié int8             | Modèle d'embeddings plus grand    | 8 Go de RAM partagés, moins de 500 Mo utilisés, index construit sur CPU en 10 minutes         |
+| Qdrant en mode local sur disque          | Serveur vectoriel ou FAISS        | Index de 2,8 Mo, aucun service à lancer, un clone vierge le reconstruit                       |
+| Calculatrice par arbre syntaxique        | `eval` sur l'expression du modèle | Un outil exposé à un LLM ne doit jamais exécuter de code arbitraire                           |
+| Phrases attendues plutôt qu'identifiants | Identifiants de passages figés    | Le jeu d'évaluation survit à un changement de découpage et reste vérifiable dans les textes   |
+| Modèle ouvert local servi par Ollama     | API payante d'un fournisseur      | Aucun coût ni donnée envoyée à un tiers, au prix d'une latence et d'une qualité mesurées ici  |
 
 ## Résultats et métriques
 

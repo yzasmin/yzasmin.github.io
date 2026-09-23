@@ -80,16 +80,16 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
-| DuckDB sur les `.csv.gz` | pandas en mémoire | 412 496 lignes lues sans décompression sur disque, avec `memory_limit='600MB'` sur un poste où il reste souvent moins de 1 Go libre |
-| Analyse à la mutation | analyse ligne à ligne | La valeur foncière est répétée sur chaque ligne d'une mutation : agréger d'abord évite de compter un prix plusieurs fois |
-| Médiane et quartiles | moyenne | La distribution du prix au m² a une longue queue à droite : la moyenne 2025 (3 602 €/m² pour les appartements) dépasse la médiane (3 483 €/m²) |
-| IQR sur le log du prix au m² | bornes fixes en euros | Une borne fixe vieillit mal et dépend du type de bien ; le log symétrise la distribution et rend la règle comparable d'une année à l'autre |
-| Seuil de 30 ventes par commune | publier toutes les communes | Une médiane sur 5 ventes n'est pas un indicateur ; le seuil laisse 25 communes sur 143 pour les appartements 2025, mais 93 % des ventes |
-| stlite sur GitHub Pages | Streamlit Community Cloud | Démo publique sans compte tiers ni serveur à maintenir, hébergée dans le même dépôt que le code |
-| Projet Power BI `.pbip` (modèle TMDL) | fichier `.pbix` binaire | Le modèle et les mesures sont du texte : relecture, diff et génération depuis `mesures.dax`, une seule définition des mesures dans le dépôt |
-| Mesures DAX contrôlées contre le SQL | croire le rapport sur parole | Les 20 mesures sont interrogées dans le moteur de Power BI puis comparées au même calcul DuckDB : 129 comparaisons, aucune différence |
+| Choix                                 | Plutôt que                   | Pourquoi                                                                                                                                       |
+| ------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| DuckDB sur les `.csv.gz`              | pandas en mémoire            | 412 496 lignes lues sans décompression sur disque, avec `memory_limit='600MB'` sur un poste où il reste souvent moins de 1 Go libre            |
+| Analyse à la mutation                 | analyse ligne à ligne        | La valeur foncière est répétée sur chaque ligne d'une mutation : agréger d'abord évite de compter un prix plusieurs fois                       |
+| Médiane et quartiles                  | moyenne                      | La distribution du prix au m² a une longue queue à droite : la moyenne 2025 (3 602 €/m² pour les appartements) dépasse la médiane (3 483 €/m²) |
+| IQR sur le log du prix au m²          | bornes fixes en euros        | Une borne fixe vieillit mal et dépend du type de bien ; le log symétrise la distribution et rend la règle comparable d'une année à l'autre     |
+| Seuil de 30 ventes par commune        | publier toutes les communes  | Une médiane sur 5 ventes n'est pas un indicateur ; le seuil laisse 25 communes sur 143 pour les appartements 2025, mais 93 % des ventes        |
+| stlite sur GitHub Pages               | Streamlit Community Cloud    | Démo publique sans compte tiers ni serveur à maintenir, hébergée dans le même dépôt que le code                                                |
+| Projet Power BI `.pbip` (modèle TMDL) | fichier `.pbix` binaire      | Le modèle et les mesures sont du texte : relecture, diff et génération depuis `mesures.dax`, une seule définition des mesures dans le dépôt    |
+| Mesures DAX contrôlées contre le SQL  | croire le rapport sur parole | Les 20 mesures sont interrogées dans le moteur de Power BI puis comparées au même calcul DuckDB : 129 comparaisons, aucune différence          |
 
 ## Résultats et métriques
 

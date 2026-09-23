@@ -4,7 +4,7 @@ Une app Streamlit se publie sans serveur ni compte tiers avec stlite (`@stlite/b
 
 - Page type (`pages/demo/index.html` du projet 3) : CSS et module depuis
   `https://cdn.jsdelivr.net/npm/@stlite/browser@1.9.1/build/stlite.{css,js}`, puis `mount({ requirements,
-  entrypoint, files, streamlitConfig }, element)`.
+entrypoint, files, streamlitConfig }, element)`.
 - Les fichiers se montent par URL relative : `files["data/ind_annee.csv"] = { url: "./data/ind_annee.csv" }`.
   Le script Python les lit avec `Path(__file__).resolve().parent / "data"`, donc la **même application tourne en
   local** avec `uv run streamlit run app/streamlit_app.py`, sans branche conditionnelle.

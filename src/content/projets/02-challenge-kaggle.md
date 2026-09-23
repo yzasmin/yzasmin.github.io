@@ -76,23 +76,23 @@ forte sur les régions bien couvertes et la V6 sur les régions hors distributio
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
+| Choix                                                | Plutôt que                                      | Pourquoi                                                                                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | EfficientNet-B3 à 4 canaux (environ 12 M paramètres) | ResNet-50, ConvNeXt-Tiny, Swin-Tiny (23 à 31 M) | Meilleur compromis performance, stabilité et coût ; ResNet-50 plus lourd sans gain net, ConvNeXt moins stable selon les plis, Swin pas meilleur |
-| Validation spatiale en 5 plis (blocs de 1 degré) | Découpage aléatoire | Le test est géographiquement éloigné de l'entraînement : un découpage aléatoire surestimerait le score |
-| Moyenne des logits de 10 modèles (V1 + V6) | Un seul modèle | Réduit la variance ; V1 et V6 ont des erreurs complémentaires (dans et hors distribution) |
-| Pré-entraînement Presence-Only court : 5 époques | 15 époques | 0,233 contre 0,175 : au-delà, les encodeurs se sur-spécialisent sur la tâche Presence-Only |
-| 7 variables auxiliaires pour le pré-entraînement | 57 variables | 0,233 contre 0,226 : plus de variables n'aidait pas le transfert |
-| Nombre d'espèces calibré par relevé | Top-k fixe | La richesse varie fortement d'un site à l'autre ; le facteur est optimisé pour le F1 sur la validation |
+| Validation spatiale en 5 plis (blocs de 1 degré)     | Découpage aléatoire                             | Le test est géographiquement éloigné de l'entraînement : un découpage aléatoire surestimerait le score                                          |
+| Moyenne des logits de 10 modèles (V1 + V6)           | Un seul modèle                                  | Réduit la variance ; V1 et V6 ont des erreurs complémentaires (dans et hors distribution)                                                       |
+| Pré-entraînement Presence-Only court : 5 époques     | 15 époques                                      | 0,233 contre 0,175 : au-delà, les encodeurs se sur-spécialisent sur la tâche Presence-Only                                                      |
+| 7 variables auxiliaires pour le pré-entraînement     | 57 variables                                    | 0,233 contre 0,226 : plus de variables n'aidait pas le transfert                                                                                |
+| Nombre d'espèces calibré par relevé                  | Top-k fixe                                      | La richesse varie fortement d'un site à l'autre ; le facteur est optimisé pour le F1 sur la validation                                          |
 
 ## Résultats et métriques
 
-| Étape | F1 Kaggle |
-| --- | --- |
-| Modèle de départ | 0,200 (public) |
-| V1 : ensemble 5 plis | 0,22793 |
-| Pré-entraînement Presence-Only, 5 époques | 0,233 |
-| Ensemble final V1 + V6, 10 modèles | 0,23389 |
+| Étape                                     | F1 Kaggle      |
+| ----------------------------------------- | -------------- |
+| Modèle de départ                          | 0,200 (public) |
+| V1 : ensemble 5 plis                      | 0,22793        |
+| Pré-entraînement Presence-Only, 5 époques | 0,233          |
+| Ensemble final V1 + V6, 10 modèles        | 0,23389        |
 
 Au classement final, notre équipe (« Groupe1 ») termine **1re des 4 équipes** avec 0,20227, devant 0,19235,
 0,18840 et 0,18813. Une ligne « Baseline participant random » figure au-dessus de toutes les équipes, à 0,21495.

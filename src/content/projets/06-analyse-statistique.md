@@ -4,7 +4,7 @@ titre: "Qualité de l'air dans l'Hérault : ce que disent vraiment les mesures"
 ordre: 6
 categorie: 'Statistiques'
 famille: analyse
-resume: "Trois ans de mesures horaires Atmo Occitanie nettoyées et testées : manquants non aléatoires, pics isolés contre épisodes réels, saisonnalité et quatre tests dont les conditions sont vérifiées."
+resume: 'Trois ans de mesures horaires Atmo Occitanie nettoyées et testées : manquants non aléatoires, pics isolés contre épisodes réels, saisonnalité et quatre tests dont les conditions sont vérifiées.'
 statut: publie
 motif: histogram
 stack: ['R', 'Quarto', 'renv', 'data.table', 'naniar', 'rstatix']
@@ -78,14 +78,14 @@ manquante : les séries sont bornées à leur première et dernière mesure vali
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
-| Flux E2 horaire (LCSQA) | Moyennes journalières du portail Atmo | Seules les données horaires permettent la règle des 75 %, les profils horaires et le diagnostic des trous ; le portail sert de contrôle |
-| Agrégation hebdomadaire avant test | Tests sur les valeurs journalières | L'autocorrélation de rang 1 passe de 0,69 à 0,54 et les effectifs cessent d'être artificiellement gonflés |
-| Wilcoxon apparié et Friedman | Test t et ANOVA | Normalité rejetée (Shapiro-Wilk) et variances inégales (Levene) ; l'appariement par semaine neutralise en plus la météo |
-| Aucune imputation, règle des 75 % | Imputation par la moyenne ou interpolation | Les manques sont des blocs de plusieurs jours : les imputer inventerait la dynamique à décrire |
-| data.table et filtrage au téléchargement | tidyverse chargé sur 12 Go | Chaque fichier national est lu puis supprimé : 119 Mo conservés, moins de 1 Go de RAM utilisé |
-| renv figé sur un instantané Posit | CRAN courant | R 4.2 n'a plus de binaires sur CRAN ; l'instantané du 01/04/2024 rend `renv::restore()` reproductible sans compilation |
+| Choix                                    | Plutôt que                                 | Pourquoi                                                                                                                                |
+| ---------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Flux E2 horaire (LCSQA)                  | Moyennes journalières du portail Atmo      | Seules les données horaires permettent la règle des 75 %, les profils horaires et le diagnostic des trous ; le portail sert de contrôle |
+| Agrégation hebdomadaire avant test       | Tests sur les valeurs journalières         | L'autocorrélation de rang 1 passe de 0,69 à 0,54 et les effectifs cessent d'être artificiellement gonflés                               |
+| Wilcoxon apparié et Friedman             | Test t et ANOVA                            | Normalité rejetée (Shapiro-Wilk) et variances inégales (Levene) ; l'appariement par semaine neutralise en plus la météo                 |
+| Aucune imputation, règle des 75 %        | Imputation par la moyenne ou interpolation | Les manques sont des blocs de plusieurs jours : les imputer inventerait la dynamique à décrire                                          |
+| data.table et filtrage au téléchargement | tidyverse chargé sur 12 Go                 | Chaque fichier national est lu puis supprimé : 119 Mo conservés, moins de 1 Go de RAM utilisé                                           |
+| renv figé sur un instantané Posit        | CRAN courant                               | R 4.2 n'a plus de binaires sur CRAN ; l'instantané du 01/04/2024 rend `renv::restore()` reproductible sans compilation                  |
 
 ## Résultats et métriques
 

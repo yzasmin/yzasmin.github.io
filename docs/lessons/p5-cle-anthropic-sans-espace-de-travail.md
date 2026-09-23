@@ -3,7 +3,7 @@ Une clé Anthropic non rattachée à un espace de travail fait échouer tous les
 # Clé API présente mais inutilisable
 
 - Symptôme : `anthropic.BadRequestError: 400 ... This API key is not scoped to a workspace, so this
-  request must include the anthropic-workspace-id header with the ID of the workspace to use.`
+request must include the anthropic-workspace-id header with the ID of the workspace to use.`
 - La clé est bien lue (pas d'erreur d'authentification) : le problème n'est ni le `.env`, ni
   `python-dotenv`, ni la variable `ANTHROPIC_BASE_URL`.
 - Correction côté code : construire le client avec
