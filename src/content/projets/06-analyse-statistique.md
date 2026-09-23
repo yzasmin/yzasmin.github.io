@@ -93,7 +93,9 @@ manquante : les séries sont bornées à leur première et dernière mesure vali
 
 **Test 1, NO2 semaine contre week-end** (Wilcoxon apparié sur les semaines calendaires, correction
 de Holm sur 8 stations) : la baisse est significative sur 5 stations, baisse médiane 12,3 %, tailles
-d'effet r de 0,21 à 0,55. Le résultat intéressant est négatif : à Montpellier Liberté, l'axe le plus
+d'effet r de 0,21 à 0,55. Ce compte de 5 dépend du périmètre de correction retenu : en appliquant Holm
+non plus par famille de tests mais aux 54 tests confirmatoires du rapport, Agathois-piscénois passe de
+p = 0,031 à p = 0,079 et le compte tombe à 4 sur 8 (`results/holm_perimetre.csv`). Le résultat intéressant est négatif : à Montpellier Liberté, l'axe le plus
 circulé, l'écart n'est que de 5,3 % et n'est pas significatif après correction (p = 0,107). Ce
 non-rejet ne dit pas qu'il n'y a pas de baisse : l'écart de Hodges-Lehmann y est estimé à 2,2 µg/m³,
 IC95 [0,0 ; 4,4], donc compatible avec une baisse réelle, simplement non établie. Et ce qui est
