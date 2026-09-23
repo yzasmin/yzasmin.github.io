@@ -108,6 +108,23 @@ baseball glove et Confidence (+0,31), baseball glove et Affection (−0,32).
 
 ![Matrice objet x émotion apprise par B+I+Y](/images/projets/projet-fin-etudes/matrice_objet_emotion.png)
 
+## Impact métier
+
+Travail d'études à deux, présenté sous forme de poster : rien n'a été déployé, et aucun gain en entreprise
+n'est revendiqué ici. Ce que le projet apporte est une réponse chiffrée à une question de conception que se
+pose une équipe de recherche en vision par ordinateur : décrire la scène par des variables explicites
+(objets, couleurs, lumière), qui se relisent, ou empiler un troisième réseau de neurones opaque ?
+
+- **Mesuré** : avant tout entraînement, 654 paires objet × émotion sur 2 080 sont statistiquement liées,
+  soit 31,4 % contre environ 5 % attendus par hasard (`results/resultats_poster.json`). La piste était
+  donc justifiée avant d'y passer du temps de calcul.
+- **Mesuré** : la branche ajoutée pèse 30 832 paramètres sur les 33,2 millions du modèle, moins de 0,1 %
+  de sa taille, pour +0,49 point de reconnaissance (`results/parametres_mesures.json`, recompté dans le
+  code). Le gain est modeste, son coût aussi, et les deux sont connus au lieu d'être supposés.
+- **Estimé, au conditionnel** : pour une équipe qui doit expliquer une prédiction à un comité d'éthique ou
+  à un commanditaire, la lisibilité d'un descripteur explicite compterait sans doute davantage que ce
+  demi-point. C'est une hypothèse de travail issue de l'usage courant en recherche, pas un résultat mesuré.
+
 ## Limites et pistes d'amélioration
 
 - **Résultats non réexécutés** : les chiffres viennent du poster, sans checkpoint ni journal d'entraînement conservé.

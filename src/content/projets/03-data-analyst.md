@@ -135,6 +135,24 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 ![Classement des communes de l'Hérault par prix médian au m² des appartements en 2025](/images/projets/data-analyst/communes-appartements.png)
 
+## Impact métier
+
+Pour un responsable d'agence immobilière qui fixe un prix de mise en vente, ou pour le service habitat
+d'une collectivité qui suit la tension du marché, la question est toujours la même : à quel prix au m² se
+situe vraiment une commune cette année, et sur combien de ventes repose ce chiffre.
+
+- **Mesuré** : 105 463 ventes de logements sur cinq ans et 342 communes du département passent dans la
+  chaîne ; au seuil de 30 ventes, 83 communes restent publiables pour les maisons en 2025 et 25 pour les
+  appartements (`results/resume.json`, `results/couverture_communes.csv`).
+- **Mesuré** : la chaîne se rejoue en environ 1 min 30 sur un portable ordinaire, téléchargement exclu
+  (`scripts/pipeline.py`). À chaque nouvelle publication DVF, les indicateurs sont refaits le jour même.
+- **Mesuré** : les 20 indicateurs du rapport Power BI ont été comparés au même calcul SQL sur
+  129 combinaisons, sans aucune différence (`results/concordance_dax_powerbi.csv`). Un chiffre montré en
+  réunion a été vérifié contre sa source.
+- **Estimé, au conditionnel** : en supposant qu'un analyste mette une demi-journée à refaire ce
+  dédoublonnage et ces médianes à la main à chaque millésime, ordre de grandeur courant dans un service
+  d'études, la chaîne ramènerait ce travail à une minute et demie de calcul, plus la relecture.
+
 ## Limites et pistes d'amélioration
 
 - **Le rapport Power BI tient en une page.** Les pages « Communes » et « Comparaison de villes » prévues dans

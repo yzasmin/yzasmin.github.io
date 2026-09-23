@@ -111,6 +111,25 @@ si petit modèle. Une seconde configuration, sans appel d'outils, qui place dire
 passages dans l'invite, est en cours d'analyse. Tant que la comparaison des deux configurations n'est pas
 terminée, aucune performance de génération n'est présentée comme définitive, et la fiche reste en cours.
 
+## Impact métier
+
+Le destinataire est un bureau d'études thermiques, ou un chargé d'affaires en maîtrise d'œuvre, qui doit
+retrouver le seuil réglementaire applicable à un projet et surtout pouvoir le citer. Ce qui est livré
+aujourd'hui est une recherche documentaire mesurée, pas un assistant qui rédige.
+
+- **Mesuré** : 694 passages issus de 12 documents officiels, chacun portant son document, sa section, sa
+  page et son URL, donc recopiable dans une note avec sa référence (`results/retrieval_metrics.json`).
+- **Mesuré** : la bonne source figure dans les dix premiers résultats pour 87,5 % des 32 questions du jeu
+  d'évaluation, en 26,5 ms de calcul en médiane. La recherche rend la main immédiatement ; la lecture et
+  la décision restent humaines.
+- **Estimé, au conditionnel** : en supposant qu'un chargé d'affaires mette plusieurs minutes à retrouver
+  le bon tableau dans un arrêté de 52 articles, ses huit annexes et un guide de 93 pages, ce que la
+  structure du corpus rend plausible, l'outil ramènerait cette recherche à la lecture de dix passages
+  déjà référencés.
+- **Non démontré, et dit comme tel** : la rédaction automatique de la réponse n'est pas exploitable en
+  l'état (3,1 % des questions du périmètre traitées). Aucun gain de rédaction n'est revendiqué tant que la
+  comparaison des deux configurations n'est pas terminée.
+
 ## Limites et pistes d'amélioration
 
 Le rappel@1 de 0,359 reste faible : deux tiers des questions ne trouvent pas leur source en premier

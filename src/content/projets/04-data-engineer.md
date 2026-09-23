@@ -123,6 +123,25 @@ restées vides sur la totalité de la période observée.
 
 ![Stations les plus souvent vides](/images/projets/data-engineer/stations-vides.png)
 
+## Impact métier
+
+Pour l'exploitant d'un réseau de vélos en libre-service, ou pour le service mobilité d'une collectivité,
+ce flux répond à deux décisions concrètes : où envoyer le camion de rééquilibrage, et quelles stations
+redimensionner.
+
+- **Mesuré** : 13,59 % des relevés correspondent à une station sans aucun vélo, 0,00 % à une station sans
+  borne libre, et 4 stations sur 52 sont restées vides sur toute la période observée
+  (`results/vides_pleines_global.json`, `results/stations_vides_pleines.csv`). Le problème est la pénurie,
+  pas la saturation, et il se concentre sur quelques points du réseau.
+- **Mesuré** : entre la publication du flux et la donnée disponible en base, le pipeline ajoute moins de
+  6 secondes au 95e centile (`results/latence.json`). Une alerte « station vide » partirait donc dans la
+  minute qui suit la publication, et non le lendemain.
+- **Mesuré** : 35 contrôles de qualité s'exécutent à chaque construction, toutes les 15 minutes, et le
+  contrôle de fraîcheur avertit après 5 minutes sans nouvelle donnée (`results/dbt_build.txt`,
+  `dbt/models/staging/sources.yml`) : un flux figé est repéré dans le quart d'heure.
+- Portée honnête : ces parts sont celles de 5,14 heures d'un mardi après-midi. Elles montrent ce que la
+  brique permet de mesurer, pas le comportement du réseau le matin ou le week-end.
+
 ## Limites et pistes d'amélioration
 
 Il manque une copie d'écran du tableau de bord Grafana : le runner d'intégration continue n'a pas de

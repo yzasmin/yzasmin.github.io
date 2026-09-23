@@ -108,6 +108,23 @@ Le dépôt republié contient le code des cinq membres, les chemins de serveur r
 d'environnement, un environnement uv et un test de fumée qui instancie les architectures et vérifie une sortie de
 5 016 logits sur tenseurs aléatoires, sans données ni GPU (6 tests réussis sur un portable).
 
+## Impact métier
+
+Compétition interne de promotion, menée à cinq : rien n'a été livré à un utilisateur. Le destinataire
+naturel d'un tel modèle serait une équipe de recherche en biodiversité ou un bureau d'études
+environnement préparant un inventaire floristique, pour décider où envoyer les botanistes en premier.
+
+- **Mesuré** : le modèle couvre 5 016 espèces apprises sur 88 987 relevés de terrain, et rend pour chaque
+  point une liste dont la longueur est calibrée relevé par relevé, entre 1 et 50 espèces
+  (`results/scores_kaggle.json`).
+- **Mesuré** : le score F1 passe de 0,200 pour le modèle de départ à 0,23389 pour l'assemblage final.
+  À ce niveau, une liste prédite est une piste de terrain, pas un inventaire : elle ne dispense d'aucune
+  vérification humaine.
+- **Mesuré, et c'est la limite qui compterait pour un commanditaire** : 67,4 % des points de test sont à
+  plus de 10 km des zones d'entraînement, et le score y tombe d'environ 0,35 en validation à 0,20 sur le
+  classement final. La fiabilité baisse là où personne n'a encore prospecté, c'est-à-dire là où on
+  voudrait justement s'en servir.
+
 ## Limites et pistes d'amélioration
 
 - **Nous n'avons pas battu la ligne de référence.** La première place est un rang entre équipes : sur le tableau

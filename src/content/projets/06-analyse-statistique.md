@@ -127,6 +127,25 @@ sanitaire au sens de l'OMS ne l'est pas.
 
 ![Profil horaire du NO2](/images/projets/analyse-statistique/profil_horaire_no2.png)
 
+## Impact métier
+
+Pour le service environnement ou santé-environnement d'une collectivité, et pour une équipe de recherche
+qui travaille sur l'exposition des habitants, deux décisions sont en jeu : sur quel périmètre agir, et
+sur quel seuil communiquer.
+
+- **Mesuré** : 3 couples station-année sur 41 dépassent la valeur limite annuelle européenne, mais 31 sur
+  41 dépassent la ligne directrice de l'OMS 2021, dont 11 sur 11 pour les particules fines PM2,5
+  (`results/seuils_oms_ue.csv`). Être en règle au sens européen ne veut donc pas dire être en règle au
+  sens sanitaire, et c'est le message que cette analyse permet de porter avec ses chiffres.
+- **Mesuré** : la station de trafic Montpellier Liberté affiche 2,8 fois la moyenne des deux stations de
+  fond urbain de la même ville, 42,9 contre 17,4 et 13,1 µg/m³
+  (`results/test3_no2_stations_moyennes.csv`). L'action utile se décide à l'échelle d'un axe de
+  circulation, pas de la commune entière.
+- **Mesuré** : les 460 131 mesures horaires retenues sont contrôlées contre les moyennes publiées par
+  Atmo Occitanie, avec une corrélation d'au moins 0,9915 sur 13 936 jours
+  (`results/controle_atmo_journalier.csv`), et le rapport entier se recalcule en environ 4 minutes : il
+  se remet à jour à chaque nouvelle année de données.
+
 ## Limites et pistes d'amélioration
 
 - Trois années seulement : une tendance pluriannuelle ne se distingue pas d'un effet météorologique,
