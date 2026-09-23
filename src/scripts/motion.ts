@@ -41,17 +41,8 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
     });
   });
 
-  gsap.utils.toArray<HTMLElement>('[data-count]').forEach((element) => {
-    const target = Number(element.dataset.count);
-    const counter = { value: 0 };
-    gsap.to(counter, {
-      value: target,
-      duration: 1.4,
-      ease: 'power2.out',
-      scrollTrigger: onEnter(element),
-      onUpdate: () => {
-        element.textContent = String(Math.round(counter.value));
-      },
-    });
-  });
+  // Pas de décompte animé sur les chiffres du parcours : pendant l'animation, la page
+  // affichait « 0 ans d'alternance », « 1 ans de freelance », « ~7 rapports », « 0re place ».
+  // Un chiffre faux, même une seconde, n'a pas sa place ici. Le bloc garde son apparition
+  // en fondu, la valeur reste celle rendue par le serveur.
 });
