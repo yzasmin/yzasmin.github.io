@@ -13,7 +13,7 @@ liens:
   notebook: 'https://yzasmin.github.io/qualite-air-occitanie/'
 teaser: 'video/projets/analyse-statistique.mp4'
 metriques:
-  - { label: 'Mesures horaires analysées', valeur: '477 820' }
+  - { label: 'Mesures horaires analysées', valeur: '460 131' }
   - { label: 'Jours valides (règle des 75 %)', valeur: '98,0 %' }
   - { label: 'NO2 plus bas le week-end', valeur: '5 stations sur 8' }
   - { label: 'Ozone été contre hiver', valeur: '1,42 à 1,70 fois' }
@@ -38,7 +38,9 @@ tests. Il est écrit en R et rendu avec Quarto pour que chaque chiffre soit rejo
 - **Source principale** : flux E2 du LCSQA (base nationale Geod'air), publié sur data.gouv.fr sous
   Licence Ouverte 2.0. Un fichier national par jour d'environ 11 Mo, soit 1 096 fichiers pour
   2023-2025, filtrés à la volée sur l'organisme Atmo Occitanie et les stations de l'Hérault :
-  **477 820 mesures horaires**, 21 séries station-polluant, 11 sites, NO2, O3, PM10 et PM2,5.
+  **477 820 mesures horaires lues**, 21 séries station-polluant, 11 sites, NO2, O3, PM10 et PM2,5.
+  Sur ces lignes, 17 689 portent un code de validité invalidé et sont mises à NA dès la lecture :
+  les analyses portent donc sur **460 131 mesures valides**, et c'est ce chiffre qui est mis en tuile.
 - **Source de contrôle** : moyennes journalières publiées par Atmo Occitanie sur son portail open
   data (service ArcGIS, ODbL 1.0), qui couvrent aussi Béziers et Sète, absentes du flux E2.
 - **Volume** : 12 Go transférés, 119 Mo conservés après filtrage, rien de commité (`data/` est
@@ -92,7 +94,12 @@ manquante : les séries sont bornées à leur première et dernière mesure vali
 **Test 1, NO2 semaine contre week-end** (Wilcoxon apparié sur les semaines calendaires, correction
 de Holm sur 8 stations) : la baisse est significative sur 5 stations, baisse médiane 12,3 %, tailles
 d'effet r de 0,21 à 0,55. Le résultat intéressant est négatif : à Montpellier Liberté, l'axe le plus
-circulé, l'écart n'est que de 5,3 % et n'est pas significatif après correction (p = 0,107).
+circulé, l'écart n'est que de 5,3 % et n'est pas significatif après correction (p = 0,107). Ce
+non-rejet ne dit pas qu'il n'y a pas de baisse : l'écart de Hodges-Lehmann y est estimé à 2,2 µg/m³,
+IC95 [0,0 ; 4,4], donc compatible avec une baisse réelle, simplement non établie. Et ce qui est
+comparé ici est un contraste semaine / week-end sur des concentrations, pas un effet du trafic :
+aucun comptage routier n'entre dans l'analyse, et le jour de la semaine est aussi un indicateur du
+chauffage tertiaire, des livraisons et des chantiers.
 
 **Test 2, ozone selon la saison** (Kruskal-Wallis puis Dunn, moyennes hebdomadaires du maximum
 journalier sur 8 heures) : Shapiro-Wilk rejette la normalité dans 4 groupes station-saison sur 20 et
@@ -127,7 +134,19 @@ sanitaire au sens de l'OMS ne l'est pas.
   station et saison.
 - Béziers et Sète ne sont pas dans le flux E2 : le test 4 repose sur 58 semaines de moyennes
   journalières et compare deux points de mesure, pas deux villes.
-- L'agrégation hebdomadaire réduit l'autocorrélation sans l'annuler (0,54 en médiane) : les
-  p-valeurs restent optimistes, d'où l'importance des tailles d'effet publiées à côté.
+- L'agrégation hebdomadaire réduit l'autocorrélation des **niveaux** sans l'annuler (0,69 en
+  journalier, 0,54 en hebdomadaire). Mais pour un test apparié, la quantité qui compte est
+  l'autocorrélation des **différences**, que le code calcule : elle va de -0,45 à -0,10 sur les huit
+  stations du test 1, donc l'appariement absorbe la dépendance et ces p-valeurs ne sont pas
+  optimistes ; elle vaut 0,22 sur 58 semaines au test 4, ce qui élargit l'intervalle d'environ 25 %
+  sans changer la conclusion. La réserve vaut en réalité pour les tests 2 et 3, qui traitent comme
+  indépendantes des semaines consécutives qui ne le sont pas : Friedman est un test par blocs, il
+  n'est pas exonéré par l'appariement, et le contraste saisonnier ne repose que sur 12 blocs
+  saison-année réellement indépendants. Ce sont les tailles d'effet qui portent ces deux conclusions,
+  pas les p-valeurs.
+- La correction de Holm est appliquée **par famille**, une famille par question de recherche, pas
+  globalement. `results/holm_perimetre.csv` chiffre ce choix : sous un contrôle global des 54 tests
+  confirmatoires, 4 tests changent de statut et le « 5 stations sur 8 » du test 1 deviendrait
+  « 4 sur 8 » (Agathois-piscénois passe de p = 0,031 à p = 0,079).
 - Le passage de l'ozone à la section efficace CCQM.O3.2019 en 2025 crée une rupture de comparabilité
   de quelques pour cent qui n'est pas corrigée.

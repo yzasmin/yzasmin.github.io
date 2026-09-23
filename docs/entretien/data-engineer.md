@@ -57,7 +57,8 @@ Oui, mais pas sur mon poste : le moteur Docker y plante au démarrage sur un soc
 continue GitHub (run 35797505264, tâche `pipeline`, conclusion `success`) : `docker compose up -d`, rejeu
 de l'archive réelle de 5,14 heures collectée le même jour, 8 minutes d'ingestion en direct, `dbt build`,
 `pytest`, export SQL des chiffres en artefact. Résultats : 17 264 messages reçus, 16 848 relevés insérés,
-52 doublons écartés, 0 message invalide, 42 tests dbt passés, latence de bout en bout 38,44 s en médiane
+52 doublons écartés, 0 message invalide, 35 tests de qualité dbt passés sur 35 (le `PASS=42` de `dbt build`
+ajoute les 7 modèles construits), latence de bout en bout 38,44 s en médiane
 et 40,99 s au 95e centile sur les relevés en direct. Le débit vient d'un rejeu, je ne le présente pas
 comme une mesure de charge ; la latence, elle, vient bien d'une ingestion en direct. Les relevés rejoués
 portent `is_replay = true` et sont exclus des calculs de latence, sinon la mesure n'aurait aucun sens.

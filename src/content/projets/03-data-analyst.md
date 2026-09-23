@@ -111,10 +111,16 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 ![Prix médian au m² des appartements à Montpellier, Sète et Béziers de 2021 à 2025](/images/projets/data-analyst/trois-villes.png)
 
-- **Les communes les moins chères sont celles qui ont le plus augmenté.** Corrélation de rang de Spearman entre le
-  prix médian de 2021 et l'évolution 2021-2025 : -0,65 pour les appartements (22 communes, p = 0,0017 par test de
-  permutation) et -0,32 pour les maisons (82 communes, p = 0,0030). Un rattrapage est plausible, mais la régression
-  vers la moyenne produit le même signe : le résultat est publié avec cette réserve.
+- **Les communes les moins chères sont celles qui ont le plus augmenté.** Corrélation de rang de Spearman
+  **-0,61 [-0,71 ; -0,47]** pour les appartements (22 communes) et **-0,25 [-0,38 ; -0,13]** pour les maisons
+  (82 communes), le prix de départ et le dénominateur de l'évolution étant estimés sur **deux moitiés disjointes**
+  des ventes de 2021 (200 tirages, `results/rattrapage_split_sample.csv`).
+  Ce détour est nécessaire : la corrélation brute entre le prix de 2021 et l'évolution `prix_2025 / prix_2021 - 1`
+  (-0,65 et -0,32) fait apparaître le prix de 2021 dans les deux variables, au numérateur de l'une et au
+  dénominateur de l'autre. Ce couplage mathématique suffit à produire une corrélation négative par le seul bruit
+  d'échantillonnage, et un test de permutation ne l'écarte pas, puisqu'il détruit justement le couplage qu'il
+  faudrait tester. Estimer les deux quantités sur des ventes disjointes rend les bruits indépendants : la
+  corrélation reste négative sur les 200 tirages, et le rattrapage est établi plutôt que supposé.
 - **Le rapport Power BI affiche les mêmes chiffres.** Le projet `.pbip` ouvert dans Power BI Desktop
   2.157.1354.0 charge les 105 463 ventes et évalue ses 20 mesures DAX. Interrogées directement dans le moteur puis
   comparées au même calcul en SQL : 129 comparaisons, 15 mesures, 10 contextes de filtre, **aucune différence**
@@ -124,7 +130,7 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 - **Vérification systématique** : chaque chiffre de cette fiche existe dans `results/` du dépôt
   (`resume.json`, `ind_annee_type.csv`, `ic_evolutions.csv`, `ind_commune_annee_type.csv`, `chiffres_cles.json`,
-  `rattrapage_communes.json`), et six tests pytest contrôlent l'enchaînement du journal de nettoyage, le respect du
+  `rattrapage_split_sample.csv`), et six tests pytest contrôlent l'enchaînement du journal de nettoyage, le respect du
   seuil de publication et l'égalité entre les mesures recalculées et les tables d'indicateurs.
 
 ![Classement des communes de l'Hérault par prix médian au m² des appartements en 2025](/images/projets/data-analyst/communes-appartements.png)

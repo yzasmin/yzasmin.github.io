@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
-import { person } from '../data/profile';
+import { person, search } from '../data/profile';
 import { url } from '../lib/url';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 const siteName = `${person.firstName} ${person.lastName}, Data Scientist, Data Analyst, Data Engineer`;
 const {
   title = siteName,
-  description = 'Portfolio de Yasmina Saoud : data science, analyse de données et data engineering à Montpellier et Béziers. Master MIASHS, deux ans d’alternance data, projets documentés.',
+  description = 'Portfolio de Yasmina Saoud, Data Analyst, Data Engineer et Data Scientist. Recherche un CDI ou un CDD à Montpellier, Béziers et alentours, disponible en octobre 2026. Master MIASHS, deux ans d’alternance data, six projets documentés.',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url('video/intro-poster.jpg'), Astro.site);
@@ -25,6 +25,12 @@ const personJsonLd = {
   address: { '@type': 'PostalAddress', addressLocality: 'Montpellier', addressCountry: 'FR' },
   alumniOf: 'Université Paul Valéry Montpellier 3',
   sameAs: [person.linkedin, person.github],
+  seeks: {
+    '@type': 'Demand',
+    name: `${search.contract}, Data Analyst, Data Engineer ou Data Scientist`,
+    availabilityStarts: '2026-10-01',
+    areaServed: ['Montpellier', 'Béziers', 'Hérault'],
+  },
 };
 ---
 
@@ -67,7 +73,7 @@ const personJsonLd = {
     <main id="contenu" tabindex="-1" class="outline-none">
       <slot />
     </main>
-    <footer class="mx-auto mt-24 max-w-7xl px-5 md:px-8">
+    <footer class="mx-auto mt-16 max-w-7xl px-5 md:px-8">
       <div class="mono-label flex flex-col gap-2 border-t border-rule py-8 sm:flex-row sm:justify-between">
         <span>
           © {new Date().getFullYear()} {person.firstName} {person.lastName}

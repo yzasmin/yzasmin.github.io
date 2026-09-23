@@ -1,6 +1,6 @@
 ---
 import SectionHead from './SectionHead.astro';
-import { cvFiles, person } from '../data/profile';
+import { cvFiles, person, search } from '../data/profile';
 import { url } from '../lib/url';
 
 const profiles = [
@@ -9,14 +9,8 @@ const profiles = [
 ];
 ---
 
-<section id="contact" aria-labelledby="contact-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-  <SectionHead
-    id="contact-titre"
-    fig="05"
-    label="Contact"
-    title="Parlons de vos données."
-    intro={`Je cherche un poste en data science, analyse ou data engineering dans la région de Montpellier et Béziers. Disponible à partir d'${person.availability.toLowerCase()}.`}
-  />
+<section id="contact" aria-labelledby="contact-titre" class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-24">
+  <SectionHead id="contact-titre" fig="05" label="Contact" title="Parlons de vos données." intro={search.sentence} />
 
   <a href={`mailto:${person.email}`} class="group block border-y border-ink py-8 md:py-10" data-reveal>
     <span class="mono-label">Écrire un email</span>

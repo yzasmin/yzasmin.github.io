@@ -19,6 +19,10 @@ déployé sur GitHub Pages par GitHub Actions.
 - Textes de présentation, stack, parcours, liens et CV : `src/data/profile.ts`.
 - Fiches projets : `src/content/projets/*.md`, mode d'emploi dans `docs/gabarit-projet.md`.
 - CV téléchargeables : `public/cv/` (une page du CV source par poste visé).
+- Photo de profil : déposer le fichier dans `public/images/` sous le nom exact `portrait-yasmina.jpg`
+  (`.jpeg`, `.png`, `.webp` ou `.avif` acceptés), cadrage portrait 4/5, au moins 800 × 1000 px, moins de 2 Mo.
+  Tant que le fichier est absent, la section « À propos » s'affiche sans photo et occupe toute la largeur ;
+  dès qu'il est présent, Astro l'optimise (AVIF/WebP, srcset) et l'affiche, sans autre modification de code.
 - Vidéo du hero : `public/video/intro.mp4` et `intro-poster.jpg`, sources HyperFrames dans `../video/hero-intro/`.
 - Teasers projets : gabarit HyperFrames dans `../video/teaser-template/`, rendus dans `public/video/projets/`.
 - Direction artistique (couleurs, typographies, motifs) : `docs/design.md`.

@@ -34,12 +34,25 @@ Friedman avec post-hoc de Wilcoxon apparié.
 
 ## 4. Les mesures horaires sont autocorrélées : comment avez-vous traité l'indépendance ?
 
-C'est le point le plus délicat du projet. J'ai mesuré l'autocorrélation de rang 1 : 0,69 en médiane sur
-les valeurs journalières, 0,54 sur les moyennes hebdomadaires. Tous les tests portent donc sur des
-moyennes hebdomadaires, et, quand c'est possible, sur des différences appariées à l'intérieur de la
-même semaine, ce qui supprime en plus la saisonnalité commune et la météo du jour. Sur ces différences,
-l'autocorrélation tombe entre -0,45 et -0,10. Je ne prétends pas l'avoir annulée : je l'écris dans les
-limites et je publie les tailles d'effet à côté des p-valeurs, qui restent optimistes.
+C'est le point le plus délicat du projet, et il faut distinguer deux quantités. L'autocorrélation de
+rang 1 des **niveaux** vaut 0,69 en médiane sur les valeurs journalières et 0,54 sur les moyennes
+hebdomadaires : c'est ce qui justifie d'agréger à la semaine. Mais pour un test **apparié**, la quantité
+qui décide de la validité est l'autocorrélation des **différences**, et le code la calcule aussi.
+
+Pour le test 1, elle va de -0,45 à -0,10 sur les huit stations : elle est négative partout, donc
+l'appariement absorbe la dépendance temporelle et l'effectif effectif est supérieur à n. Ces p-valeurs
+ne sont pas optimistes. Pour le test 4, elle vaut 0,22 sur 58 semaines, soit un effectif effectif
+d'environ 37 et un intervalle élargi d'environ 25 % : l'intervalle de Hodges-Lehmann [-30,6 ; -27,1]
+passe à environ [-31,0 ; -26,6], la conclusion ne bouge pas.
+
+La vraie réserve est ailleurs, et je la nomme maintenant explicitement : elle porte sur les tests 2 et
+3, qui traitent comme indépendantes des semaines consécutives qui ne le sont pas. Friedman est un test
+**par blocs**, il suppose l'indépendance des blocs, donc des semaines, et il n'est pas exonéré par
+l'appariement comme je l'écrivais avant. Sa p-valeur de 4,6e-109 est un plancher numérique, pas une
+mesure d'évidence : la statistique V du post-hoc vaut 10 440 pour plusieurs paires, soit exactement le
+maximum arithmétique 144 x 145 / 2. Et sur trois ans, le contraste saisonnier du test 2 ne repose que
+sur 12 blocs saison-année réellement indépendants. Dans les deux cas la conclusion tient, mais c'est la
+taille d'effet qui la porte (W de Kendall 0,885, epsilon² au moins 0,527), pas la p-valeur.
 
 ## 5. Quelle correction pour les tests multiples, et pourquoi ?
 
@@ -49,14 +62,26 @@ post-hoc de Dunn. Holm contrôle le taux d'erreur familial comme Bonferroni mais
 puissant. Avec une dizaine de tests, contrôler le FWER reste raisonnable ; si j'avais eu des centaines
 de comparaisons, j'aurais utilisé Benjamini-Hochberg pour contrôler le taux de fausses découvertes.
 
+Ce périmètre est un choix, et je le déclare maintenant dans le rapport plutôt que de le laisser
+implicite, parce qu'il n'est pas neutre. Je l'ai chiffré : `results/holm_perimetre.csv` rejoue la
+correction sur les 54 tests confirmatoires du rapport pris ensemble. Sous ce contrôle global,
+4 tests changent de statut, dont la station Agathois-piscénois qui passe de p = 0,031 à p = 0,079 :
+le « 5 stations sur 8 » du test 1 deviendrait « 4 sur 8 ». Si un statisticien me pose la question, la
+réponse est écrite et le fichier est dans le dépôt.
+
 ## 6. Quel résultat vous a surpris ?
 
 Le résultat négatif du test 1. On s'attend à ce que le NO2 baisse partout le week-end, et c'est vrai sur
 5 stations sur 8 avec une baisse médiane de 12,3 %. Mais à Montpellier Liberté, la station trafic de
 l'axe le plus circulé, la baisse n'est que de 5,3 % et n'est plus significative après correction de Holm
-(p = 0,107). Je l'ai publié tel quel : le trafic de fin de semaine ne suffit pas à faire baisser les
-niveaux sur les grands axes. Deux autres stations ne sont pas significatives simplement parce que leur
-série est trop courte (15 et 50 semaines).
+(p = 0,107). Je l'ai publié tel quel, mais je fais attention à ce que j'en conclus. D'abord, un
+non-rejet n'est pas une preuve d'absence : l'écart de Hodges-Lehmann y est estimé à 2,2 µg/m³ avec un
+IC95 [0,0 ; 4,4], donc parfaitement compatible avec une baisse réelle allant jusqu'à 4,4 µg/m³, elle
+n'est simplement pas établie après correction sur les huit stations. Ensuite, ce que je mesure est un
+contraste semaine / week-end sur des concentrations, pas un effet du trafic : aucun comptage routier
+n'entre dans l'analyse, et le jour de la semaine est aussi un indicateur du chauffage tertiaire, des
+livraisons, des chantiers et du transit. Deux autres stations ne sont pas significatives simplement
+parce que leur série est trop courte (15 et 50 semaines).
 
 ## 7. Comment savez-vous que votre nettoyage est correct ?
 
@@ -79,7 +104,8 @@ par le code qui rend le rapport, de sorte que chaque chiffre du portfolio se ret
 ## À garder en tête
 
 - Volume : 1 096 fichiers nationaux d'environ 11 Mo lus puis supprimés, 477 820 mesures horaires
-  conservées, 119 Mo sur le disque, moins de 1 Go de RAM.
+  conservées, dont 460 131 valides et réellement analysées (17 689 lignes au code de validité invalidé,
+  mises à NA dès la lecture), 119 Mo sur le disque, moins de 1 Go de RAM.
 - Piège à raconter : le code de validité 4 (ozone, section efficace CCQM.O3.2019, apparu en 2025) ;
   filtrer sur `validité == 1` supprime six mois d'ozone sur cinq stations sans erreur visible.
 - Message métier : conformité réglementaire presque acquise (3 dépassements de valeur limite annuelle

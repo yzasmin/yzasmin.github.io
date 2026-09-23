@@ -13,13 +13,13 @@ const todayLabel = now.toLocaleDateString('fr-FR', { month: 'short', year: 'nume
 const experiences = rows.filter((row) => row.points.length > 0).reverse();
 ---
 
-<section id="parcours" aria-labelledby="parcours-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+<section id="parcours" aria-labelledby="parcours-titre" class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-24">
   <SectionHead
     id="parcours-titre"
     fig="04"
     label="Parcours"
     title="Sept ans en diagramme de Gantt."
-    intro="Études, alternance et freelance se sont superposés : c'est ce chevauchement qui a construit un profil à la fois technique et orienté métier."
+    intro="Études, alternance et activité indépendante se sont superposées : c'est ce chevauchement qui a construit un profil à la fois technique et orienté métier."
   />
 
   <figure>
@@ -99,8 +99,8 @@ const experiences = rows.filter((row) => row.points.length > 0).reverse();
     </figcaption>
   </figure>
 
-  <div class="mt-16 grid gap-12 lg:grid-cols-12">
-    <div class="space-y-10 lg:col-span-8">
+  <div class="mt-12 grid gap-10 lg:grid-cols-12">
+    <div class="space-y-8 lg:col-span-8">
       {experiences.map((row) => (
         <article data-reveal>
           <p class="mono-label">

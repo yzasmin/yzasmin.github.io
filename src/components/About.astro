@@ -1,25 +1,68 @@
 ---
+import { Image } from 'astro:assets';
 import SectionHead from './SectionHead.astro';
-import { about, softSkills, stats } from '../data/profile';
+import { aboutClosing, person, softSkills, stats, valueProps } from '../data/profile';
+
+// Photo de profil, optionnelle : voir la note du README, section « Où modifier quoi ».
+// Tant que le fichier n'existe pas, le glob renvoie un objet vide et la section s'affiche sans photo.
+const portraits = import.meta.glob<{ default: ImageMetadata }>(
+  '../../public/images/portrait-yasmina.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+const portrait = Object.values(portraits)[0]?.default;
 ---
 
-<section id="a-propos" aria-labelledby="a-propos-titre" class="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-  <SectionHead id="a-propos-titre" fig="01" label="À propos" title="Des données à la décision." />
+<section id="a-propos" aria-labelledby="a-propos-titre" class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-24">
+  <SectionHead
+    id="a-propos-titre"
+    fig="01"
+    label="À propos"
+    title="Ce que je fais gagner."
+    intro="Trois apports concrets, chacun avec la preuve chiffrée qui va avec. Les outils viennent après, section suivante."
+  />
 
-  <div class="grid gap-14 lg:grid-cols-12">
-    <div class="space-y-5 text-lg leading-relaxed lg:col-span-6">
-      {about.map((paragraph) => (
-        <p data-reveal>{paragraph}</p>
+  <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+    {portrait && (
+      <figure class="lg:col-span-3" data-reveal>
+        <div class="brackets max-w-[15rem] border border-rule sm:max-w-[17rem] lg:max-w-none">
+          <Image
+            src={portrait}
+            alt="Portrait de Yasmina Saoud, data analyst et data engineer"
+            widths={[260, 520, 780]}
+            sizes="(min-width: 1024px) 280px, (min-width: 640px) 272px, 240px"
+            class="aspect-[4/5] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <figcaption class="mono-label mt-4">
+          {person.firstName} {person.lastName} · {person.location}
+        </figcaption>
+      </figure>
+    )}
+
+    <div class:list={['space-y-9', portrait ? 'lg:col-span-5' : 'lg:col-span-8']}>
+      {valueProps.map((item, index) => (
+        <article data-reveal>
+          <h3 class="flex gap-3 font-display text-xl leading-tight font-bold tracking-tight md:text-2xl">
+            <span class="mono-label shrink-0 pt-1.5 !text-signal">0{index + 1}</span>
+            {item.title}
+          </h3>
+          <p class="mt-3 leading-relaxed text-ink-2">{item.text}</p>
+        </article>
       ))}
+      <p class="border-t border-rule pt-7 leading-relaxed" data-reveal>
+        {aboutClosing}
+      </p>
     </div>
 
-    <div class="lg:col-span-6">
+    <div class="lg:col-span-4">
       <dl class="grid grid-cols-2 border-t border-l border-rule">
         {stats.map((stat, index) => (
-          <div class="relative flex flex-col border-r border-b border-rule p-5 md:p-7" data-reveal>
+          <div class="relative flex flex-col border-r border-b border-rule p-5 md:p-6" data-reveal>
             <span class="mono-label absolute top-3 right-4 !normal-case">n.{index + 1}</span>
             <dt class="order-2 mt-3 text-sm leading-snug text-ink-2">{stat.label}</dt>
-            <dd class="display order-1 text-[clamp(2.8rem,6vw,4.5rem)] text-ink">
+            <dd class="display order-1 text-[clamp(2.5rem,5.5vw,3.75rem)] text-ink">
               {stat.prefix}
               <span data-count={stat.value}>{stat.value}</span>
               <span class="text-signal">{stat.suffix}</span>
@@ -28,7 +71,7 @@ import { about, softSkills, stats } from '../data/profile';
         ))}
       </dl>
 
-      <div class="mt-10" data-reveal>
+      <div class="mt-8" data-reveal>
         <h3 class="mono-label">Savoir-être</h3>
         <ul class="mt-4 flex flex-wrap gap-2">
           {softSkills.map((skill, index) => (

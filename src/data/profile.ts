@@ -24,18 +24,40 @@ export const person = {
   github: 'https://github.com/yzasmin',
   languages: 'Français natif, anglais C1, arabe C2, espagnol B2',
   pitch:
-    "Diplômée d'un Master MIASHS (Mathématiques et Informatique Appliquées aux Sciences Humaines et Sociales), mention Bien, à l'Université Paul Valéry Montpellier 3. Deux ans d'alternance en data au sein du Groupe Angelotti (filiale Nexity), cinq ans de freelance en web design et développement web en parallèle des études.",
+    "Je fiabilise les chiffres sur lesquels une direction décide, j'automatise les rapports encore faits à la main, et je rends chaque analyse reproductible et défendable.",
 };
 
-export const about = [
-  "Pendant deux ans d'alternance au Groupe Angelotti, j'ai occupé un poste data polyvalent : une trentaine de rapports et tableaux de bord Power BI pour cinq services métier, des pipelines ETL sous SQL Server, la fiabilisation d'une migration ERP et un outil Python d'aide à la décision qui repère les opérations à risque de marge.",
-  "Le Master MIASHS m'a donné le socle mathématique et statistique. Le deep learning, le NLP et les LLM sont venus avec les projets, dont une première place au Deep Learning Challenge MIASHS 2026 et la certification NVIDIA « Generative AI with Diffusion Models ».",
-  "Cinq ans de freelance m'ont appris le reste : écouter le besoin, cadrer, livrer, expliquer. Je traduis une question métier en données, puis les données en décision.",
+// Ce que cherche Yasmina, affiché dès le premier écran : c'est la première question d'un service RH.
+export const search = {
+  contract: 'CDI ou CDD',
+  mobility: 'Montpellier, Béziers et alentours, mobile dans la région',
+  availability: 'Octobre 2026',
+  sentence:
+    "Je recherche un CDI ou un CDD de Data Analyst, Data Engineer ou Data Scientist, à Montpellier, Béziers et alentours, mobile dans la région. Disponible à partir d'octobre 2026.",
+};
+
+// Ce que l'entreprise gagne, avec la preuve chiffrée à côté. Pas une liste d'outils.
+export const valueProps = [
+  {
+    title: 'Des chiffres sur lesquels une direction peut décider',
+    text: 'Je vérifie mes chiffres avant de les publier : mes vingt mesures Power BI rejouées une par une en SQL, 129 comparaisons, écart maximal de 4,8e-14. Et chez Angelotti, une migration ERP fiabilisée, environ 1 440 tiers rapprochés sans perte de donnée critique.',
+  },
+  {
+    title: 'Des rapports qui ne se refont plus à la main',
+    text: "Une trentaine de rapports et tableaux de bord Power BI pour cinq services métier, alimentés par des pipelines ETL sous SQL Server et des connecteurs vers l'ERP, des API REST et des bases SQL. Le temps passé à recopier des extractions repart vers l'analyse.",
+  },
+  {
+    title: 'Des analyses reproductibles et défendables',
+    text: "Chaque chiffre affiché existe dans un fichier du dépôt, chaque règle de nettoyage est comptée, chaque projet publie ses limites. Les six projets de ce portfolio suivent ce protocole. C'est ce qui permet de défendre un résultat en réunion, pas seulement de le montrer.",
+  },
 ];
+
+export const aboutClosing =
+  'Le Master MIASHS a donné le socle mathématique et statistique ; le deep learning, le NLP et les LLM sont venus avec les projets. Cinq ans à diriger ma propre activité ont appris le reste : écouter un besoin, le cadrer, le chiffrer, livrer, former.';
 
 export const stats = [
   { value: 2, prefix: '', suffix: ' ans', label: "d'alternance data, Groupe Angelotti (filiale Nexity)" },
-  { value: 5, prefix: '', suffix: ' ans', label: 'de freelance en web design et développement web' },
+  { value: 5, prefix: '', suffix: ' ans', label: 'à diriger ma propre activité : cadrer, chiffrer, livrer, former' },
   { value: 30, prefix: '~', suffix: '', label: 'rapports et tableaux de bord Power BI pour 5 services métier' },
   { value: 1, prefix: '', suffix: 're', label: 'place au Deep Learning Challenge MIASHS 2026' },
 ];
@@ -112,7 +134,7 @@ export const timeline = {
   rows: [
     {
       title: 'Développeuse web, activité indépendante',
-      org: 'Freelance, Montpellier',
+      org: 'Activité indépendante, Montpellier',
       dates: '2019 à 2024',
       from: 2019,
       to: 2024.75,

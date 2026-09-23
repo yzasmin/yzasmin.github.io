@@ -53,9 +53,19 @@ Trois : la hausse s'arrête en 2023 (pic à 3 355,77 €/m² tous logements, 3 3
 plus bougé que les prix (-30,9 % de ventes entre 2021 et 2024, +13,4 % en 2025) ; le littoral domine le classement.
 La surprise, c'est Montpellier au 17e rang des 25 communes publiables pour les appartements 2025, à 3 425 €/m²,
 derrière Sète (3 497 €/m²) qui était 277 €/m² en dessous en 2021. J'ai aussi mesuré une corrélation négative entre
-le prix de 2021 et l'évolution (Spearman -0,65 pour les appartements, p = 0,0017 par permutation) : les communes les
-moins chères ont le plus augmenté. Je la publie avec la réserve qui s'impose, la régression vers la moyenne donne le
-même signe.
+le prix de 2021 et l'évolution : les communes les moins chères ont le plus augmenté.
+
+Sur ce dernier point, la première version de la preuve ne tenait pas et je l'ai refaite. Je corrélais le prix de
+2021 avec `prix_2025 / prix_2021 - 1`, avec une p-valeur de permutation à 0,0017. Le problème : le prix de 2021 est
+au numérateur de la première variable et au dénominateur de la seconde, donc le seul bruit d'échantillonnage sur la
+médiane de 2021 produit une corrélation négative, même sans aucun rattrapage. Et permuter ne répond pas à
+l'objection, puisque la permutation détruit précisément le couplage qu'il faudrait tester.
+
+Le test que je publie maintenant sépare aléatoirement les ventes de 2021 de chaque commune en deux moitiés :
+l'abscisse est estimée sur la première, le dénominateur de l'évolution sur la seconde. Les deux bruits deviennent
+indépendants et le couplage disparaît. Sur 200 tirages, la corrélation de rang médiane est de -0,61 [-0,71 ; -0,47]
+pour les appartements et -0,25 [-0,38 ; -0,13] pour les maisons, négative sur les 200 tirages. La conclusion n'a pas
+changé, sa justification oui, et c'est maintenant une preuve que je peux défendre.
 
 ## 7. Vous parlez de Power BI, mais il n'y a pas de fichier .pbix. Pourquoi ?
 

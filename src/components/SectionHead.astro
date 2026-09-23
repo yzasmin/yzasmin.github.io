@@ -10,7 +10,7 @@ interface Props {
 const { id, fig, label, title, intro } = Astro.props;
 ---
 
-<div class="mb-12 md:mb-16">
+<div class="mb-10 md:mb-14">
   <div class="mono-label flex items-center gap-4">
     <span>
       <span class="text-signal">FIG. {fig}</span> / {label}
@@ -18,7 +18,7 @@ const { id, fig, label, title, intro } = Astro.props;
     <span class="h-px flex-1 bg-rule" data-draw aria-hidden="true"></span>
   </div>
   <div class="ticks mt-2 opacity-70" aria-hidden="true"></div>
-  <div class="mt-8 grid gap-6 lg:grid-cols-12 lg:items-end">
+  <div class="mt-7 grid gap-6 lg:grid-cols-12 lg:items-end">
     <h2 id={id} class="display text-[clamp(2.6rem,7vw,5.5rem)] lg:col-span-7" data-reveal>
       {title}
     </h2>
