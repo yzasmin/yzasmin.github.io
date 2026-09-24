@@ -34,7 +34,6 @@ L'integration continue, elle, reste sur LocalStack, et c'est volontaire : le wor
 ne doit porter aucune cle reelle. Elle prouve ce qu'elle peut prouver, c'est-a-dire l'orchestration
 elle-meme, et le README dit lequel des deux porte quoi.
 
-
 Le workflow monte la pile complete avec `docker compose up -d --build`, attend que PostgreSQL,
 LocalStack et le serveur web soient sains, puis enchaine : `airflow dags list`,
 `airflow dags list-import-errors`, `airflow tasks list --tree`, les tests du graphe,

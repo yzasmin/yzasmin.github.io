@@ -21,7 +21,7 @@ def client_s3(cfg):
 - `addressing_style: path` est necessaire pour LocalStack, qui ne gere pas `seau.s3.amazonaws.com`.
   C'est le seul reglage specifique du projet, et il est adosse a la meme condition.
 - Pour DuckDB, meme principe : `CREATE SECRET ... ENDPOINT 'localstack:4566', URL_STYLE 'path',
-  USE_SSL false` contre l'emulateur, `PROVIDER credential_chain` contre le vrai compte.
+USE_SSL false` contre l'emulateur, `PROVIDER credential_chain` contre le vrai compte.
 
 ## Ce que LocalStack en edition communautaire ne fait pas
 

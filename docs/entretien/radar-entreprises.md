@@ -57,22 +57,22 @@ Neuf sur la couche argent, cinq sur la couche or. Six sont bloquants, les autres
 La separation suit une regle simple : **est bloquant ce que le pipeline lui-meme doit garantir, est
 alerte ce qui depend d'un tiers**.
 
-| Controle | Bloquant | Ce qu'il attrape |
-| --- | --- | --- |
-| `unicite_id_annonce` | oui | Le BODACC republie parfois le meme identifiant (avis rectificatif) |
-| `cles_non_nulles` | oui | Une annonce sans identifiant ou sans date casse la partition |
-| `type_evenement_dans_le_vocabulaire` | oui | Une nouvelle famille d'avis cote source, non traitee cote code |
-| `partition_homogene` | oui | Une ligne d'un autre jour dans la partition du jour |
-| `perimetre_departemental` | oui | Un code commune hors Herault, donc un rapprochement faux |
-| `volumetrie_dans_la_norme` | oui | Une collecte partielle, ou une source qui deraille |
-| `fraicheur_source` | oui | Un flux arrete : sans ce controle, le graphe produirait des partitions vides sans rien dire |
-| `rapprochement_communes` | oui | Une regression de la normalisation des noms de communes |
-| `presence_siren` | non (alerte) | Degradation de la qualite des identifiants |
-| `grain_or_unique` | oui | Un doublon d'agregation |
-| `conservation_argent_vers_or` | oui | Des evenements perdus entre deux couches |
-| `coherence_solde_net` | oui | Une formule d'indicateur cassee |
-| `compteurs_positifs` | oui | Un compteur negatif, donc un bug d'agregation |
-| `couverture_naf` | non (alerte) | Une panne de l'API d'enrichissement |
+| Controle                             | Bloquant     | Ce qu'il attrape                                                                            |
+| ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------- |
+| `unicite_id_annonce`                 | oui          | Le BODACC republie parfois le meme identifiant (avis rectificatif)                          |
+| `cles_non_nulles`                    | oui          | Une annonce sans identifiant ou sans date casse la partition                                |
+| `type_evenement_dans_le_vocabulaire` | oui          | Une nouvelle famille d'avis cote source, non traitee cote code                              |
+| `partition_homogene`                 | oui          | Une ligne d'un autre jour dans la partition du jour                                         |
+| `perimetre_departemental`            | oui          | Un code commune hors Herault, donc un rapprochement faux                                    |
+| `volumetrie_dans_la_norme`           | oui          | Une collecte partielle, ou une source qui deraille                                          |
+| `fraicheur_source`                   | oui          | Un flux arrete : sans ce controle, le graphe produirait des partitions vides sans rien dire |
+| `rapprochement_communes`             | oui          | Une regression de la normalisation des noms de communes                                     |
+| `presence_siren`                     | non (alerte) | Degradation de la qualite des identifiants                                                  |
+| `grain_or_unique`                    | oui          | Un doublon d'agregation                                                                     |
+| `conservation_argent_vers_or`        | oui          | Des evenements perdus entre deux couches                                                    |
+| `coherence_solde_net`                | oui          | Une formule d'indicateur cassee                                                             |
+| `compteurs_positifs`                 | oui          | Un compteur negatif, donc un bug d'agregation                                               |
+| `couverture_naf`                     | non (alerte) | Une panne de l'API d'enrichissement                                                         |
 
 Les deux alertes dependent de l'API Recherche d'entreprises, qui n'est pas la mienne. Si elle tombe,
 les comptes par commune restent justes et seule la ventilation par secteur devient inconnue. Bloquer

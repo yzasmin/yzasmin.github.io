@@ -4,11 +4,11 @@ Trois portes existent vers SIRENE et une seule convient a un flux quotidien sur 
 
 Mesures faites le 23/09/2026 avant d'ecrire une ligne de code.
 
-| Porte d'entree | Ce que c'est | Verdict |
-| --- | --- | --- |
-| **Fichiers stock** sur data.gouv.fr (`lov2`, mensuel) | `StockEtablissement` en Parquet : **2 210 114 710 octets**, soit 2,21 Go, plus 0,71 Go pour `StockUniteLegale` | Ecarte : mensuel, donc incapable de porter un radar quotidien, et 2,2 Go a telecharger et filtrer sur un poste de 8 Go a chaque rafraichissement |
-| **API SIRENE 3.11 de l'INSEE** (`api.insee.fr/api-sirene/3.11`) | Acces complet, y compris les variables non diffusibles | Ecarte pour l'instant : **HTTP 401** sans jeton, un compte INSEE et une cle sont necessaires. A reprendre le jour ou la cle existe |
-| **API Recherche d'entreprises** (`recherche-entreprises.api.gouv.fr`) | Donnees SIRENE et RNE, **sans cle**, **7 requetes par seconde et par adresse IP** (30 par ASN) | Retenue |
+| Porte d'entree                                                        | Ce que c'est                                                                                                   | Verdict                                                                                                                                          |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Fichiers stock** sur data.gouv.fr (`lov2`, mensuel)                 | `StockEtablissement` en Parquet : **2 210 114 710 octets**, soit 2,21 Go, plus 0,71 Go pour `StockUniteLegale` | Ecarte : mensuel, donc incapable de porter un radar quotidien, et 2,2 Go a telecharger et filtrer sur un poste de 8 Go a chaque rafraichissement |
+| **API SIRENE 3.11 de l'INSEE** (`api.insee.fr/api-sirene/3.11`)       | Acces complet, y compris les variables non diffusibles                                                         | Ecarte pour l'instant : **HTTP 401** sans jeton, un compte INSEE et une cle sont necessaires. A reprendre le jour ou la cle existe               |
+| **API Recherche d'entreprises** (`recherche-entreprises.api.gouv.fr`) | Donnees SIRENE et RNE, **sans cle**, **7 requetes par seconde et par adresse IP** (30 par ASN)                 | Retenue                                                                                                                                          |
 
 ## Ce que l'API ouverte ne sait pas faire, et ce que cela impose
 

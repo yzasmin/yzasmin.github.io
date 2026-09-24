@@ -44,11 +44,11 @@ qui comble trois manques nommés par l'audit : aucune orchestration, aucun cloud
 
 ## Données
 
-| Source | Ce qu'elle apporte | Licence | Fréquence |
-| --- | --- | --- | --- |
-| **BODACC**, API Explore v2.1 de la DILA | Les annonces légales du jour | Licence Ouverte (`FR-LO`) | Quotidienne, du mardi au samedi |
-| **API Recherche d'entreprises** | Code NAF, tranche d'effectif, date de création | Données SIRENE et RNE sous Licence Ouverte 2.0, sans clé, 7 requêtes par seconde | Quotidienne |
-| **geo.api.gouv.fr** | Les 341 communes de l'Hérault : code INSEE, codes postaux, population, centroïde | Licence Ouverte | Annuelle |
+| Source                                  | Ce qu'elle apporte                                                               | Licence                                                                          | Fréquence                       |
+| --------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------- |
+| **BODACC**, API Explore v2.1 de la DILA | Les annonces légales du jour                                                     | Licence Ouverte (`FR-LO`)                                                        | Quotidienne, du mardi au samedi |
+| **API Recherche d'entreprises**         | Code NAF, tranche d'effectif, date de création                                   | Données SIRENE et RNE sous Licence Ouverte 2.0, sans clé, 7 requêtes par seconde | Quotidienne                     |
+| **geo.api.gouv.fr**                     | Les 341 communes de l'Hérault : code INSEE, codes postaux, population, centroïde | Licence Ouverte                                                                  | Annuelle                        |
 
 Volumétrie mesurée le 24/09/2026 et enregistrée dans `results/sources_verifiees.json` :
 **50 778 718** annonces au total dans le jeu BODACC, dont **1 086 632** pour le seul département de
@@ -95,16 +95,16 @@ ligne. Un test verrouille cette propriété.
 
 ## Choix techniques
 
-| Choix | Plutôt que | Pourquoi |
-| --- | --- | --- |
-| Airflow, avec un DAG vide de logique métier | Une tâche planifiée qui lance un script | L'ordonnanceur apporte quatre choses qu'un script n'a pas : rejouer une date précise depuis `logical_date`, arrêter la chaîne à la tâche de contrôle, reprendre sans tout refaire, un journal par tâche. Ce qu'il n'apporte pas, c'est l'exécution du code métier : elle reste dans des fonctions testables sans lui |
-| BODACC comme source principale, SIRENE en enrichissement | Le stock SIRENE mensuel comme source | Le stock pèse 2 210 114 710 octets et bouge une fois par mois : il ne peut pas porter un radar quotidien. Le BODACC est un vrai flux journalier, et l'API ouverte plafonne à 10 000 résultats, ce qui interdit d'énumérer un département |
-| Partitionnement Hive, clé hors du fichier Parquet | Une colonne de date dans le fichier | C'est la seule forme qu'Athena et DuckDB lisent tous les deux, avec le même SQL. Elle divise aussi la taille : 954 123 octets de JSON brut deviennent 73 580 octets de Parquet Snappy, soit un facteur **12,97** |
-| Contrôles bloquants, séparés des alertes | Un journal d'avertissements | Est bloquant ce que le pipeline doit garantir lui-même ; est alerte ce qui dépend d'un tiers. Une panne de l'API d'enrichissement doit dégrader la ventilation par secteur, pas empêcher de publier les comptes par commune |
-| Volumétrie calibrée sur les centiles mesurés de l'historique | Un seuil autour de la médiane | Mesure sur 60 jours réels : de 1 à 1 046 annonces par jour, médiane 425, cinquième centile 9. Un seuil à la médiane sur quatre refusait dix de ces soixante journées, toutes légitimes |
-| Aucune reprise sur les tâches de contrôle | Les deux reprises par défaut | Un échec de qualité est déterministe : le rejouer ne change rien. Mesuré en intégration continue, une parution refusée coûtait **1 676 s** avec deux reprises et attente exponentielle, contre **22 s** sans |
-| DuckDB en secours d'Athena, sur les mêmes Parquet | Athena seul | Le projet reste exécutable sans compte AWS, et le SQL reste standard : la bascule vers Athena ne demande aucune réécriture de requête |
-| LocalStack pour l'intégration continue, vrai S3 pour les chiffres | Une clé AWS dans un workflow public | Un dépôt public avec une clé réelle en secret permet à n'importe qui d'exécuter ce qu'il veut sur le compte via une pull request |
+| Choix                                                             | Plutôt que                              | Pourquoi                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Airflow, avec un DAG vide de logique métier                       | Une tâche planifiée qui lance un script | L'ordonnanceur apporte quatre choses qu'un script n'a pas : rejouer une date précise depuis `logical_date`, arrêter la chaîne à la tâche de contrôle, reprendre sans tout refaire, un journal par tâche. Ce qu'il n'apporte pas, c'est l'exécution du code métier : elle reste dans des fonctions testables sans lui |
+| BODACC comme source principale, SIRENE en enrichissement          | Le stock SIRENE mensuel comme source    | Le stock pèse 2 210 114 710 octets et bouge une fois par mois : il ne peut pas porter un radar quotidien. Le BODACC est un vrai flux journalier, et l'API ouverte plafonne à 10 000 résultats, ce qui interdit d'énumérer un département                                                                             |
+| Partitionnement Hive, clé hors du fichier Parquet                 | Une colonne de date dans le fichier     | C'est la seule forme qu'Athena et DuckDB lisent tous les deux, avec le même SQL. Elle divise aussi la taille : 954 123 octets de JSON brut deviennent 73 580 octets de Parquet Snappy, soit un facteur **12,97**                                                                                                     |
+| Contrôles bloquants, séparés des alertes                          | Un journal d'avertissements             | Est bloquant ce que le pipeline doit garantir lui-même ; est alerte ce qui dépend d'un tiers. Une panne de l'API d'enrichissement doit dégrader la ventilation par secteur, pas empêcher de publier les comptes par commune                                                                                          |
+| Volumétrie calibrée sur les centiles mesurés de l'historique      | Un seuil autour de la médiane           | Mesure sur 60 jours réels : de 1 à 1 046 annonces par jour, médiane 425, cinquième centile 9. Un seuil à la médiane sur quatre refusait dix de ces soixante journées, toutes légitimes                                                                                                                               |
+| Aucune reprise sur les tâches de contrôle                         | Les deux reprises par défaut            | Un échec de qualité est déterministe : le rejouer ne change rien. Mesuré en intégration continue, une parution refusée coûtait **1 676 s** avec deux reprises et attente exponentielle, contre **22 s** sans                                                                                                         |
+| DuckDB en secours d'Athena, sur les mêmes Parquet                 | Athena seul                             | Le projet reste exécutable sans compte AWS, et le SQL reste standard : la bascule vers Athena ne demande aucune réécriture de requête                                                                                                                                                                                |
+| LocalStack pour l'intégration continue, vrai S3 pour les chiffres | Une clé AWS dans un workflow public     | Un dépôt public avec une clé réelle en secret permet à n'importe qui d'exécuter ce qu'il veut sur le compte via une pull request                                                                                                                                                                                     |
 
 ## Résultats et métriques
 
@@ -115,21 +115,21 @@ d'intégration continue, qui tourne contre un S3 émulé par LocalStack : ce dé
 porte volontairement aucune clé AWS. **Athena n'a pas tourné** ; le moteur de requête exécuté est
 DuckDB, sur exactement les mêmes fichiers Parquet.
 
-| Mesure | Valeur | Source |
-| --- | --- | --- |
-| Parutions rejouées sur le vrai S3 | 12, dont **11 publiées et 1 refusée** | `results/execution_aws.json` |
-| Durée totale, durée médiane d'une parution | 1 371 s, 136 s | `results/execution_aws.json` |
-| Annonces extraites, parution du 22/09 | 475 | `results/volumetrie.json` |
-| Événements typés (silver) | 475 | `results/volumetrie.json` |
-| Lignes d'indicateurs (gold) | 275 | `results/volumetrie.json` |
-| Communes touchées ce jour-là | 117 | `results/synthese.json` |
-| Rattachement à une commune du référentiel | 99,79 %, soit 474 sur 475 | `results/controles_qualite.csv` |
-| SIREN valide (clé de Luhn) | 100,00 %, soit 475 sur 475 | `results/controles_qualite.csv` |
-| Rattachement à une section NAF | 97,47 %, soit 463 sur 475 | `results/controles_qualite.csv` |
-| Contrôles de qualité | 15, dont 13 bloquants, tous au vert | `results/controles_qualite.csv` |
-| Compression JSON vers Parquet Snappy | facteur **12,97** | `results/volumetrie.json` |
-| Volume écrit sur S3 | 17 592 164 octets, 148 objets | `results/volumetrie.json` |
-| Tests | 135 passés, 4 sautés hors conteneur | `results/pytest.txt` |
+| Mesure                                     | Valeur                                | Source                          |
+| ------------------------------------------ | ------------------------------------- | ------------------------------- |
+| Parutions rejouées sur le vrai S3          | 12, dont **11 publiées et 1 refusée** | `results/execution_aws.json`    |
+| Durée totale, durée médiane d'une parution | 1 371 s, 136 s                        | `results/execution_aws.json`    |
+| Annonces extraites, parution du 22/09      | 475                                   | `results/volumetrie.json`       |
+| Événements typés (silver)                  | 475                                   | `results/volumetrie.json`       |
+| Lignes d'indicateurs (gold)                | 275                                   | `results/volumetrie.json`       |
+| Communes touchées ce jour-là               | 117                                   | `results/synthese.json`         |
+| Rattachement à une commune du référentiel  | 99,79 %, soit 474 sur 475             | `results/controles_qualite.csv` |
+| SIREN valide (clé de Luhn)                 | 100,00 %, soit 475 sur 475            | `results/controles_qualite.csv` |
+| Rattachement à une section NAF             | 97,47 %, soit 463 sur 475             | `results/controles_qualite.csv` |
+| Contrôles de qualité                       | 15, dont 13 bloquants, tous au vert   | `results/controles_qualite.csv` |
+| Compression JSON vers Parquet Snappy       | facteur **12,97**                     | `results/volumetrie.json`       |
+| Volume écrit sur S3                        | 17 592 164 octets, 148 objets         | `results/volumetrie.json`       |
+| Tests                                      | 135 passés, 4 sautés hors conteneur   | `results/pytest.txt`            |
 
 **La parution refusée est le résultat le plus utile du lot.** Le 16 septembre, le BODACC n'avait
 publié **qu'une seule annonce** pour l'Hérault. Le contrôle de volumétrie l'a vue, la tâche a levé,
@@ -159,15 +159,15 @@ l'hypothèse qui la produit. Aucun gain en euros n'est avancé.**
 
 ### Ce qui est mesuré
 
-| Signal livré | Valeur mesurée | Ce qu'un utilisateur en fait |
-| --- | --- | --- |
-| **Défaillances sur 11 parutions** | **93**, dont 62 liquidations | Une liste nominative d'entreprises en procédure collective, avec commune, secteur, tribunal et date de jugement. C'est la matière d'une revue de portefeuille client |
-| **Concentration géographique** | Montpellier porte **50 des 93 défaillances**, soit 53,8 %, pour 178 créations. Aucune autre commune ne dépasse 3 | Dit où concentrer une revue de risque, et où elle ne sert à rien |
-| **Secteur le plus tendu** | **Construction : 21 défaillances pour 12 créations**, seul grand secteur à solde négatif. Hébergement-restauration suit à 16 contre 18. Commerce : 14 pour 132 | Un critère sectoriel pour pondérer un encours ou cibler une prospection |
-| **Prospects du jour** | **121 créations** le 22 septembre, avec dénomination, SIREN, commune et activité déclarée | Une liste de prospection à jour le jour même de la parution |
-| **Ventes de fonds** | 8 le 22 septembre, dont 5 avec un prix lisible, **1 374 086 euros** cumulés | Un signal de changement d'exploitant, utile à un bailleur comme à un fournisseur |
-| **Fraîcheur** | La parution du jour même est interrogeable ; le graphe traite une parution en **136 s** en médiane | Le délai entre publication légale et disponibilité de l'indicateur est celui du graphe, pas celui d'un abonnement |
-| **Coût d'exploitation** | **0,0015 USD par mois** aujourd'hui, 0,0092 après un an | Le coût n'est pas un obstacle à la décision : il est négligeable à l'échelle d'un département |
+| Signal livré                      | Valeur mesurée                                                                                                                                                 | Ce qu'un utilisateur en fait                                                                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Défaillances sur 11 parutions** | **93**, dont 62 liquidations                                                                                                                                   | Une liste nominative d'entreprises en procédure collective, avec commune, secteur, tribunal et date de jugement. C'est la matière d'une revue de portefeuille client |
+| **Concentration géographique**    | Montpellier porte **50 des 93 défaillances**, soit 53,8 %, pour 178 créations. Aucune autre commune ne dépasse 3                                               | Dit où concentrer une revue de risque, et où elle ne sert à rien                                                                                                     |
+| **Secteur le plus tendu**         | **Construction : 21 défaillances pour 12 créations**, seul grand secteur à solde négatif. Hébergement-restauration suit à 16 contre 18. Commerce : 14 pour 132 | Un critère sectoriel pour pondérer un encours ou cibler une prospection                                                                                              |
+| **Prospects du jour**             | **121 créations** le 22 septembre, avec dénomination, SIREN, commune et activité déclarée                                                                      | Une liste de prospection à jour le jour même de la parution                                                                                                          |
+| **Ventes de fonds**               | 8 le 22 septembre, dont 5 avec un prix lisible, **1 374 086 euros** cumulés                                                                                    | Un signal de changement d'exploitant, utile à un bailleur comme à un fournisseur                                                                                     |
+| **Fraîcheur**                     | La parution du jour même est interrogeable ; le graphe traite une parution en **136 s** en médiane                                                             | Le délai entre publication légale et disponibilité de l'indicateur est celui du graphe, pas celui d'un abonnement                                                    |
+| **Coût d'exploitation**           | **0,0015 USD par mois** aujourd'hui, 0,0092 après un an                                                                                                        | Le coût n'est pas un obstacle à la décision : il est négligeable à l'échelle d'un département                                                                        |
 
 ### Ce qui est une estimation, et son hypothèse
 
