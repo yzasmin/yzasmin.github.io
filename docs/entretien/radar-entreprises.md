@@ -27,8 +27,8 @@ j'ai pris un ordonnanceur.
 
 Ce qu'Airflow **n'apporte pas**, et c'est pourquoi le DAG est vide de logique : il n'execute rien de
 metier. Chaque tache appelle une fonction de `radar/pipeline.py`. Le pipeline tourne sans
-ordonnanceur (`python -m radar.cli executer --jour 2026-09-22`), et les 126 tests unitaires tournent
-sur une machine ou Airflow n'est meme pas installe.
+ordonnanceur (`python -m radar.cli executer --jour 2026-09-22`), et les 135 tests tournent
+sur une machine ou Airflow n'est meme pas installe (135 passes, 4 sautes, voir `results/pytest.txt`).
 
 ## 2. Vous dites que vos controles de qualite sont bloquants. Comment le prouvez-vous ?
 
@@ -53,12 +53,14 @@ blocage plutot que de desserrer le seuil jusqu'a ce que tout passe.
 
 ## 3. Sur quels controles, exactement, et pourquoi ceux-la ?
 
-Neuf sur la couche argent, cinq sur la couche or. Six sont bloquants, les autres sont des alertes.
+Dix sur la couche argent, cinq sur la couche or. Treize sont bloquants, deux sont des alertes
+(`results/controles_qualite.csv`).
 La separation suit une regle simple : **est bloquant ce que le pipeline lui-meme doit garantir, est
 alerte ce qui depend d'un tiers**.
 
 | Controle                             | Bloquant     | Ce qu'il attrape                                                                            |
 | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------- |
+| `completude_extraction`              | oui          | Un ecart entre le nombre d'annonces ecrites et le total annonce par l'API                   |
 | `unicite_id_annonce`                 | oui          | Le BODACC republie parfois le meme identifiant (avis rectificatif)                          |
 | `cles_non_nulles`                    | oui          | Une annonce sans identifiant ou sans date casse la partition                                |
 | `type_evenement_dans_le_vocabulaire` | oui          | Une nouvelle famille d'avis cote source, non traitee cote code                              |
@@ -68,8 +70,8 @@ alerte ce qui depend d'un tiers**.
 | `fraicheur_source`                   | oui          | Un flux arrete : sans ce controle, le graphe produirait des partitions vides sans rien dire |
 | `rapprochement_communes`             | oui          | Une regression de la normalisation des noms de communes                                     |
 | `presence_siren`                     | non (alerte) | Degradation de la qualite des identifiants                                                  |
-| `grain_or_unique`                    | oui          | Un doublon d'agregation                                                                     |
-| `conservation_argent_vers_or`        | oui          | Des evenements perdus entre deux couches                                                    |
+| `grain_gold_unique`                  | oui          | Un doublon d'agregation                                                                     |
+| `conservation_silver_vers_gold`      | oui          | Des evenements perdus entre deux couches                                                    |
 | `coherence_solde_net`                | oui          | Une formule d'indicateur cassee                                                             |
 | `compteurs_positifs`                 | oui          | Un compteur negatif, donc un bug d'agregation                                               |
 | `couverture_naf`                     | non (alerte) | Une panne de l'API d'enrichissement                                                         |
@@ -97,13 +99,25 @@ La ligne publiee donne l'attendu, l'observe et la facon dont l'attendu a ete cal
 `entre 70 et 1120 annonces (mediane 280 sur 62 jours, facteur 4) | 1 annonces`. Elle se releve en dix
 secondes. Une alerte qui dirait seulement « volumetrie anormale » se releve en vingt minutes.
 
-## 5. Vous affichez AWS, mais vous n'aviez pas de compte. Qu'est-ce qui a reellement tourne ?
+## 5. Vous affichez AWS. Qu'est-ce qui a reellement tourne, et ou ?
 
-L'execution publiee est **emulee** : S3 est fourni par LocalStack, dans le meme `docker compose` que
-l'ordonnanceur. Je l'ecris en tete du README et dans la fiche, parce qu'un lecteur qui le decouvre
-apres coup a raison de se mefier de tout le reste.
+Deux choses distinctes, et je les separe toujours parce que c'est la premiere question qu'on me pose.
 
-Ce qui rend cette emulation honnete, c'est que **le code ne sait pas a qui il parle** :
+**Les chiffres publies viennent du vrai S3.** Douze parutions rejouees sur mon compte AWS, compartiment
+`amzn-s3-seau` en region eu-north-1 : onze publiees, une refusee, 1 371 s au total et 136 s en mediane.
+L'entrepot contient 148 objets pour 17 592 164 octets, et coute 0,0015 dollar par mois aux tarifs
+releves. Ces valeurs se verifient depuis l'exterieur avec une cle en lecture.
+
+**L'orchestration Airflow, elle, est prouvee en integration continue contre LocalStack**, pas contre le
+vrai compartiment. Ce n'est pas un raccourci technique mais un choix de securite : le depot est public,
+et une cle AWS placee dans les secrets d'un workflow public permettrait a n'importe qui d'executer du
+code sur mon compte via une proposition de modification. Le run cite etablit le chargement du graphe,
+neuf tests, une execution complete, son rejeu idempotent et quatre cas de blocage sur quatre.
+
+Ce que je ne pretends donc pas : qu'Airflow a pilote le vrai compartiment, que Terraform a ete applique
+(seuls `fmt` et `validate` passent), ni qu'Athena a tourne. C'est ecrit dans le README et dans la fiche.
+
+Ce qui rend cette separation tenable, c'est que **le code ne sait pas a qui il parle** :
 
 ```python
 return boto3.client("s3", endpoint_url=cfg.endpoint_url, config=reglages)
