@@ -102,11 +102,19 @@ const liens = [
     </header>
 
     <div class="mt-14 grid gap-12 lg:grid-cols-12">
-      <div class="lg:col-span-8">
+      {/* min-w-0 : sans cette règle, un tableau large étire la colonne de grille et
+          déborde l'écran sur téléphone, où le contenu est alors rogné sans recours. */}
+      <div class="min-w-0 lg:col-span-8">
         <figure data-reveal>
           <div class="brackets border border-rule bg-paper-2">
             {data.teaser ? (
-              <video class="aspect-video w-full" controls preload="none" playsinline>
+              <video
+                class="aspect-video w-full"
+                controls
+                preload="none"
+                playsinline
+                aria-label={`Teaser vidéo du projet : ${data.titre}`}
+              >
                 <source src={url(data.teaser)} type="video/mp4" />
               </video>
             ) : (

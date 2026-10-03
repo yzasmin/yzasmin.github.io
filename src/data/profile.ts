@@ -17,7 +17,7 @@ export const person = {
     { label: 'Data Analyst', family: 'analyse' as Family },
     { label: 'Data Engineer', family: 'engineering' as Family },
   ],
-  location: 'Montpellier / Béziers',
+  location: 'Occitanie',
   availability: 'Octobre 2026',
   email: 'saoudyasmina.ys@gmail.com',
   linkedin: 'https://fr.linkedin.com/in/yasmina-saoud-ysstudiodesign',
@@ -40,7 +40,7 @@ export const search = {
 export const valueProps = [
   {
     title: 'Des chiffres vérifiés avant publication',
-    text: 'Mes vingt mesures Power BI, je les ai rejouées une par une en SQL avant de les montrer : 129 comparaisons, écart maximal de 4,8e-14. Chez Angelotti, la migration ERP est passée par le même traitement, environ 1 440 tiers rapprochés sans perte de donnée critique.',
+    text: "Mes vingt mesures Power BI, je les ai rejouées une par une en SQL avant de les montrer : 129 comparaisons, écart maximal de 4,8e-14. Chez Angelotti, j'ai rapproché environ 1 440 tiers pendant une migration ERP, sans perte de donnée critique.",
   },
   {
     title: 'Des rapports qui ne se refont plus à la main',
@@ -59,7 +59,7 @@ export const stats = [
   { value: 2, prefix: '', suffix: ' ans', label: 'en data chez Groupe Angelotti, filiale de Nexity' },
   { value: 5, prefix: '', suffix: ' ans', label: 'à diriger ma propre activité : cadrer, chiffrer, livrer, former' },
   { value: 30, prefix: '~', suffix: '', label: 'rapports et tableaux de bord Power BI pour 5 services métier' },
-  { value: 1, prefix: '', suffix: 're', label: 'place au Deep Learning Challenge MIASHS 2026' },
+  { value: 1, prefix: '', suffix: 're', label: 'des 4 équipes au Deep Learning Challenge MIASHS 2026' },
 ];
 
 export const softSkills = [

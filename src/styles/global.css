@@ -333,7 +333,8 @@ body::before {
 }
 .prose-projet table {
   display: block;
-  width: 100%;
+  max-width: 100%;
+  width: max-content;
   overflow-x: auto;
   margin: 0 0 1.5rem;
   border-collapse: collapse;
@@ -355,6 +356,19 @@ body::before {
   padding: 0.6rem 0.75rem 0.6rem 0;
   vertical-align: top;
 }
+/* Sur téléphone, un tableau à trois colonnes écrase le texte en colonnes d'un mot.
+   On lui laisse sa largeur et on le fait défiler horizontalement dans son cadre. */
+@media (max-width: 640px) {
+  .prose-projet table {
+    min-width: 100%;
+  }
+  .prose-projet th,
+  .prose-projet td {
+    min-width: 9rem;
+    padding-right: 1rem;
+  }
+}
+
 .prose-projet img {
   border: 1px solid var(--rule);
 }

@@ -61,8 +61,12 @@ const portrait = Object.values(portraits)[0]?.default;
       <dl class="grid grid-cols-2 border-t border-l border-rule">
         {stats.map((stat, index) => (
           <div class="relative flex flex-col border-r border-b border-rule p-5 md:p-6" data-reveal>
-            <span class="mono-label absolute top-3 right-4 !normal-case">n.{index + 1}</span>
-            <dt class="order-2 mt-3 text-sm leading-snug text-ink-2">{stat.label}</dt>
+            <dt class="order-2 mt-3 text-sm leading-snug text-ink-2">
+              {/* Le compteur reste dans le dt : une liste de définitions n'accepte
+                  que dt et dd comme enfants, sous peine d'erreur d'accessibilité. */}
+              <span class="mono-label absolute top-3 right-4 !normal-case">n.{index + 1}</span>
+              {stat.label}
+            </dt>
             <dd class="display order-1 text-[clamp(2.5rem,5.5vw,3.75rem)] text-ink">
               {stat.prefix}
               <span data-count={stat.value}>{stat.value}</span>

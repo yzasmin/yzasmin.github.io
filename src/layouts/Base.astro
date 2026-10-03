@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import { getCollection } from 'astro:content';
 import { person, search } from '../data/profile';
 import { url } from '../lib/url';
 
@@ -10,9 +11,13 @@ interface Props {
 }
 
 const siteName = `${person.firstName} ${person.lastName}, Data Scientist, Data Analyst, Data Engineer`;
+
+// Le nombre de projets est compté, jamais écrit en dur : une description figée avait déjà
+// annoncé « six projets » alors que le site en publiait sept.
+const nombreProjets = (await getCollection('projets')).length;
 const {
   title = siteName,
-  description = 'Portfolio de Yasmina Saoud, Data Analyst, Data Engineer et Data Scientist. Poste salarié en Occitanie, télétravail possible, disponible en octobre 2026. Master MIASHS, deux ans en entreprise chez Groupe Angelotti (Nexity), sept projets documentés.',
+  description = `Portfolio de Yasmina Saoud, Data Analyst, Data Engineer et Data Scientist. Poste salarié en Occitanie, télétravail possible, disponible en octobre 2026. Master MIASHS, deux ans en entreprise chez Groupe Angelotti (Nexity), ${nombreProjets} projets documentés.`,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url('video/intro-poster.jpg'), Astro.site);
@@ -22,14 +27,14 @@ const personJsonLd = {
   name: `${person.firstName} ${person.lastName}`,
   jobTitle: 'Data Scientist, Data Analyst, Data Engineer',
   email: `mailto:${person.email}`,
-  address: { '@type': 'PostalAddress', addressLocality: 'Montpellier', addressCountry: 'FR' },
+  address: { '@type': 'PostalAddress', addressRegion: 'Occitanie', addressCountry: 'FR' },
   alumniOf: 'Université Paul Valéry Montpellier 3',
   sameAs: [person.linkedin, person.github],
   seeks: {
     '@type': 'Demand',
     name: `${search.contract}, Data Analyst, Data Engineer ou Data Scientist`,
     availabilityStarts: '2026-10-01',
-    areaServed: ['Occitanie', 'Montpellier', 'Béziers', 'Hérault'],
+    areaServed: ['Occitanie'],
   },
 };
 ---

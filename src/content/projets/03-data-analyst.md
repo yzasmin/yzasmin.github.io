@@ -95,43 +95,46 @@ un modèle Power BI documenté et une démo publique qui ne demande rien à inst
 
 ![Prix médian au m² dans l'Hérault de 2021 à 2025, appartements et maisons, avec intervalle de confiance](/images/projets/data-analyst/prix-m2-herault.png)
 
-- **Les prix ont monté jusqu'en 2023, puis se sont arrêtés.** Prix médian au m², tous logements : 3 006,67 € en
-  2021, pic à 3 355,77 € en 2023, 3 301,08 € en 2025. Sur cinq ans, +10,2 % pour les appartements
-  (IC 95 % : +8,8 % à +11,6 %) et +7,5 % pour les maisons (+6,0 % à +9,1 %). Ce sont des euros courants : corrigée
-  de l'inflation de ces cinq années, la hausse fondrait largement.
-- **Le volume a bien plus bougé que les prix** : 24 809 ventes retenues en 2021, 17 147 en 2024 (-30,9 %), puis
-  19 453 en 2025 (+13,4 %). Le marché s'est bloqué plus qu'il n'a baissé.
+Le prix médian au m², tous logements, part de 3 006,67 € en 2021, culmine à 3 355,77 € en 2023 et retombe à
+3 301,08 € en 2025 : la hausse s'arrête au milieu de la période. Sur cinq ans, cela donne +10,2 % pour les
+appartements (IC 95 % : +8,8 % à +11,6 %) et +7,5 % pour les maisons (+6,0 % à +9,1 %). Ces pourcentages sont en
+euros courants : la chaîne n'intègre aucun indice de prix, donc l'évolution en euros constants est plus faible, et
+je ne peux pas dire de combien.
+
+Les volumes, eux, ont bougé beaucoup plus que les prix : 24 809 ventes retenues en 2021, 17 147 en 2024 (-30,9 %),
+puis 19 453 en 2025 (+13,4 %). Après ce rebond, le nombre de ventes reste loin de celui de 2021, alors que le prix
+médian est repassé au-dessus.
 
 ![Nombre de ventes retenues par année et par type de bien](/images/projets/data-analyst/volumes-annuels.png)
 
-- **Le haut du classement est littoral, et Montpellier n'y figure pas.** En 2025, parmi les 25 communes publiables pour les
-  appartements : La Grande-Motte 5 232 €/m², Palavas-les-Flots 4 895 €/m², Béziers 1 833 €/m², soit un rapport de
-  2,9 entre les extrêmes. Montpellier (3 425 €/m²) n'est que 17e, dépassée par Sète (3 497 €/m²), qui était
-  277 €/m² en dessous en 2021 (2 898 contre 3 175 €/m²).
+Le haut du classement est littoral, et Montpellier n'y figure pas. En 2025, parmi les 25 communes publiables pour
+les appartements, La Grande-Motte est à 5 232 €/m² et Palavas-les-Flots à 4 895 €/m², contre 1 833 €/m² à Béziers,
+soit un rapport de 2,9 entre les extrêmes. Montpellier (3 425 €/m²) n'est que 17e, dépassée par Sète
+(3 497 €/m²), qui était 277 €/m² en dessous en 2021 (2 898 contre 3 175 €/m²).
 
 ![Prix médian au m² des appartements à Montpellier, Sète et Béziers de 2021 à 2025](/images/projets/data-analyst/trois-villes.png)
 
-- **Les communes les moins chères sont celles qui ont le plus augmenté.** Corrélation de rang de Spearman
-  -0,61 [-0,71 ; -0,47] pour les appartements (22 communes) et -0,25 [-0,38 ; -0,13] pour les maisons
-  (82 communes), le prix de départ et le dénominateur de l'évolution étant estimés sur deux moitiés disjointes
-  des ventes de 2021 (200 tirages, `results/rattrapage_split_sample.csv`).
-  Ce détour est nécessaire : la corrélation brute entre le prix de 2021 et l'évolution `prix_2025 / prix_2021 - 1`
-  (-0,65 et -0,32) fait apparaître le prix de 2021 dans les deux variables, au numérateur de l'une et au
-  dénominateur de l'autre. Ce couplage mathématique suffit à produire une corrélation négative par le seul bruit
-  d'échantillonnage, et un test de permutation ne l'écarte pas, puisqu'il détruit justement le couplage qu'il
-  faudrait tester. Estimer les deux quantités sur des ventes disjointes rend les bruits indépendants, et la
-  corrélation reste négative sur les 200 tirages.
-- **Le rapport Power BI affiche les mêmes chiffres.** Le projet `.pbip` ouvert dans Power BI Desktop
-  2.157.1354.0 charge les 105 463 ventes et évalue ses 20 mesures DAX. Interrogées directement dans le moteur puis
-  comparées au même calcul en SQL : 129 comparaisons, 15 mesures, 10 contextes de filtre, aucune différence
-  (écart relatif maximal 4,8e-14, soit l'arrondi des flottants).
+**Les communes les moins chères sont celles qui ont le plus augmenté.** Corrélation de rang de Spearman
+-0,61 [-0,71 ; -0,47] pour les appartements (22 communes) et -0,25 [-0,38 ; -0,13] pour les maisons (82 communes),
+le prix de départ et le dénominateur de l'évolution étant estimés sur deux moitiés disjointes des ventes de 2021
+(200 tirages, `results/rattrapage_split_sample.csv`). Ce détour est nécessaire : la corrélation brute entre le prix
+de 2021 et l'évolution `prix_2025 / prix_2021 - 1` (-0,65 et -0,32) fait apparaître le prix de 2021 dans les deux
+variables, au numérateur de l'une et au dénominateur de l'autre. Ce couplage mathématique suffit à produire une
+corrélation négative par le seul bruit d'échantillonnage, et un test de permutation ne l'écarte pas, puisqu'il
+détruit justement le couplage qu'il faudrait tester. Estimer les deux quantités sur des ventes disjointes rend les
+bruits indépendants, et la corrélation reste négative sur les 200 tirages.
+
+Le rapport Power BI affiche les mêmes chiffres. Le projet `.pbip` ouvert dans Power BI Desktop 2.157.1354.0 charge
+les 105 463 ventes et évalue ses 20 mesures DAX ; interrogées directement dans le moteur puis comparées au même
+calcul en SQL, elles donnent 129 comparaisons, 15 mesures, 10 contextes de filtre et aucune différence (écart
+relatif maximal 4,8e-14, soit l'arrondi des flottants).
 
 ![Le rapport Power BI ouvert dans Power BI Desktop : cartes, courbe des prix, volumes et tableau par année](/images/projets/data-analyst/rapport-power-bi.png)
 
-- **Vérification systématique** : chaque chiffre de cette fiche existe dans `results/` du dépôt
-  (`resume.json`, `ind_annee_type.csv`, `ic_evolutions.csv`, `ind_commune_annee_type.csv`, `chiffres_cles.json`,
-  `rattrapage_split_sample.csv`), et six tests pytest contrôlent l'enchaînement du journal de nettoyage, le respect du
-  seuil de publication et l'égalité entre les mesures recalculées et les tables d'indicateurs.
+Chaque chiffre de cette fiche existe dans `results/` du dépôt (`resume.json`, `ind_annee_type.csv`,
+`ic_evolutions.csv`, `ind_commune_annee_type.csv`, `chiffres_cles.json`, `rattrapage_split_sample.csv`), et six
+tests pytest contrôlent l'enchaînement du journal de nettoyage, le respect du seuil de publication et l'égalité
+entre les mesures recalculées et les tables d'indicateurs.
 
 ![Classement des communes de l'Hérault par prix médian au m² des appartements en 2025](/images/projets/data-analyst/communes-appartements.png)
 

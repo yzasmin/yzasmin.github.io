@@ -92,7 +92,7 @@ enregistrée dans le fichier plutôt qu'une moyenne des quatre.
 
 ![Comparaison des moteurs de récupération](/images/projets/agent-ia-llm/recuperation-comparaison.png)
 
-La fusion hybride gagne sur le premier résultat, le rappel à 10, le MRR et le nDCG. Elle perd trois points
+La fusion hybride gagne sur le premier résultat, le rappel à 10, le MRR et le nDCG. Elle perd 1,6 point
 de rappel@3 face à BM25 seul, et le vectoriel ne sauve qu'une seule question sur les 32. Sur un corpus
 aussi technique, le lexical fait donc l'essentiel du travail ; l'hybride ajoute quelques points là où ça
 compte, sans plus.
@@ -118,7 +118,7 @@ c'est une recherche documentaire mesurée. L'assistant ne rédige rien d'exploit
 - **Mesuré** : 694 passages issus de 12 documents officiels, chacun portant son document, sa section, sa
   page et son URL, donc recopiable dans une note avec sa référence (`results/retrieval_metrics.json`).
 - **Mesuré** : la bonne source figure dans les dix premiers résultats pour 87,5 % des 32 questions du jeu
-  d'évaluation, en 26,5 ms de calcul en médiane. La recherche rend la main immédiatement ; la lecture et la
+  d'évaluation, en 26,5 ms de calcul en médiane (`results/retrieval_metrics.json`). La recherche rend la main immédiatement ; la lecture et la
   décision restent humaines.
 - **Estimé, au conditionnel** : en supposant qu'un chargé d'affaires mette plusieurs minutes à retrouver le
   bon tableau dans un arrêté de 52 articles, ses huit annexes et un guide de 93 pages, ce que la structure

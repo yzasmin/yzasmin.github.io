@@ -20,10 +20,10 @@ metriques:
 
 ## Contexte et problème
 
-Une équipe commerciale qui prospecte dans l'Hérault et un bailleur qui suit ses locataires
-professionnels ont besoin de la même chose qu'un cabinet de conseil qui surveille un portefeuille de
-clients : savoir qui ouvre, qui bouge et qui tombe, par commune et par secteur, le jour où c'est
-publié.
+Une équipe commerciale qui prospecte dans l'Hérault veut savoir qui ouvre, par commune et par
+secteur, le jour même de la publication. Un bailleur de locaux professionnels et un cabinet qui
+suit un portefeuille de clients cherchent l'inverse dans le même flux : qui déménage, et qui passe
+devant un tribunal.
 
 L'information existe et elle est publique. Le Bulletin officiel des annonces civiles et commerciales
 publie chaque jour ouvré les créations, immatriculations, modifications, radiations, ventes de fonds
@@ -32,15 +32,15 @@ juridique et non par entreprise ni par territoire, les champs qui portent le sen
 sérialisé dans une colonne texte, le montant d'une vente de fonds est une phrase en français, et il
 n'existe ni code commune ni code d'activité, seulement un nom de ville saisi à la main.
 
-Pire, la famille d'avis est trompeuse. Sur les onze parutions traitées, le type normalisé
+La famille d'avis est trompeuse elle aussi. Sur les onze parutions traitées, le type normalisé
 « immatriculation » ne compte aucun événement : toutes les annonces de cette famille étaient en
 réalité des transferts de siège. Les compter telles quelles aurait ajouté 177 fausses ouvertures aux
 609 réelles, soit 29,1 % de surestimation.
 
 J'ai donc construit la brique manquante : un graphe quotidien qui capte ce flux, le normalise, le
 rattache à une commune et à un secteur, refuse de publier si les données ne passent pas les
-contrôles, et livre des indicateurs interrogeables en SQL. C'est aussi, dans ce portfolio, le projet
-qui comble trois manques nommés par l'audit : aucune orchestration, aucun cloud, aucun entrepôt.
+contrôles, et livre des indicateurs interrogeables en SQL. C'est le seul projet du portfolio qui
+fait tourner un ordonnanceur, un stockage objet et un entrepôt interrogeable en SQL.
 
 ## Données
 
@@ -159,15 +159,15 @@ l'hypothèse qui la produit. Je n'avance aucun gain en euros.
 
 ### Ce qui est mesuré
 
-| Signal livré                      | Valeur mesurée                                                                                                                                                 | Ce qu'un utilisateur en fait                                                                                                                                         |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Défaillances sur 11 parutions** | **93**, dont 62 liquidations                                                                                                                                   | Une liste nominative d'entreprises en procédure collective, avec commune, secteur, tribunal et date de jugement. C'est la matière d'une revue de portefeuille client |
-| **Concentration géographique**    | Montpellier porte **50 des 93 défaillances**, soit 53,8 %, pour 178 créations. Aucune autre commune ne dépasse 3                                               | Dit où concentrer une revue de risque, et où elle ne sert à rien                                                                                                     |
-| **Secteur le plus tendu**         | **Construction : 21 défaillances pour 12 créations**, seul grand secteur à solde négatif. Hébergement-restauration suit à 16 contre 18. Commerce : 14 pour 132 | Un critère sectoriel pour pondérer un encours ou cibler une prospection                                                                                              |
-| **Prospects du jour**             | **121 créations** le 22 septembre, avec dénomination, SIREN, commune et activité déclarée                                                                      | Une liste de prospection à jour le jour même de la parution                                                                                                          |
-| **Ventes de fonds**               | 8 le 22 septembre, dont 5 avec un prix lisible, **1 374 086 euros** cumulés                                                                                    | Un signal de changement d'exploitant, utile à un bailleur comme à un fournisseur                                                                                     |
-| **Fraîcheur**                     | La parution du jour même est interrogeable ; le graphe traite une parution en **136 s** en médiane                                                             | Le délai entre publication légale et disponibilité de l'indicateur est celui du graphe, pas celui d'un abonnement                                                    |
-| **Coût d'exploitation**           | **0,0015 USD par mois** aujourd'hui, 0,0092 après un an                                                                                                        | Le coût n'est pas un obstacle à la décision : il est négligeable à l'échelle d'un département                                                                        |
+| Signal livré                      | Valeur mesurée                                                                                                                                             | Ce qu'un utilisateur en fait                                                                                                                                         | Source                                                             |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Défaillances sur 11 parutions** | 93, dont 62 liquidations                                                                                                                                   | Une liste nominative d'entreprises en procédure collective, avec commune, secteur, tribunal et date de jugement. C'est la matière d'une revue de portefeuille client | `results/resume_fenetre.json`                                      |
+| **Concentration géographique**    | Montpellier porte 50 des 93 défaillances, soit 53,8 %, pour 178 créations. Aucune autre commune ne dépasse 3                                               | Dit où concentrer une revue de risque, et où elle ne sert à rien                                                                                                     | `results/fenetre_par_commune.csv`                                  |
+| **Secteur le plus tendu**         | Construction : 21 défaillances pour 12 créations, seul grand secteur à solde négatif. Hébergement-restauration suit à 16 contre 18. Commerce : 14 pour 132 | Un critère sectoriel pour pondérer un encours ou cibler une prospection                                                                                              | `results/fenetre_par_secteur.csv`                                  |
+| **Prospects du jour**             | 121 créations le 22 septembre, avec dénomination, SIREN, commune et activité déclarée                                                                      | Une liste de prospection à jour le jour même de la parution                                                                                                          | `results/synthese.json`, `results/requete_prospects_creations.csv` |
+| **Ventes de fonds**               | 8 le 22 septembre, dont 5 avec un prix lisible, 1 374 086 euros cumulés                                                                                    | Un signal de changement d'exploitant, utile à un bailleur comme à un fournisseur                                                                                     | `results/synthese.json`, `results/requete_ventes_de_fonds.csv`     |
+| **Fraîcheur**                     | La parution du jour même est interrogeable ; le graphe traite une parution en 136 s en médiane                                                             | Le délai entre publication légale et disponibilité de l'indicateur est celui du graphe, pas celui d'un abonnement                                                    | `results/execution_aws.json`                                       |
+| **Coût d'exploitation**           | 0,0015 USD par mois aujourd'hui, 0,0092 après un an                                                                                                        | À l'échelle d'un département, le stockage ne pèse pas dans un arbitrage budgétaire                                                                                   | `results/cout_s3.json`                                             |
 
 ### Ce qui est une estimation, et son hypothèse
 
@@ -181,8 +181,8 @@ supposée : personne n'a chronométré ce dépouillement manuel.
 
 **Erreur de comptage évitée.** Celle-ci est mesurée, pas estimée : compter les familles d'avis
 brutes du BODACC aurait ajouté 177 fausses créations aux 609 réelles sur la fenêtre, soit
-29,1 % de surestimation des ouvertures. Un tableau de bord construit sans cette normalisation
-affiche un dynamisme économique qui n'existe pas.
+29,1 % de surestimation des ouvertures : dans un tableau de bord construit sans cette
+normalisation, ce sont des transferts de siège qui passent pour des entreprises nouvelles.
 
 ### Ce que ce projet ne permet pas de dire
 

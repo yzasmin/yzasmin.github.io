@@ -118,13 +118,14 @@ environnement préparant un inventaire floristique, pour décider où envoyer le
 - **Mesuré** : le modèle couvre 5 016 espèces apprises sur 88 987 relevés de terrain, et rend pour chaque
   point une liste dont la longueur est calibrée relevé par relevé, entre 1 et 50 espèces
   (`results/scores_kaggle.json`).
-- **Mesuré** : le score F1 passe de 0,200 pour le modèle de départ à 0,23389 pour l'assemblage final.
-  À ce niveau, la liste prédite sert à orienter une sortie de terrain ; elle ne remplace pas un inventaire
-  et ne dispense d'aucune vérification humaine.
-- **Mesuré, et c'est la limite qui compterait pour un commanditaire** : 67,4 % des points de test sont à
-  plus de 10 km des zones d'entraînement, et le score y tombe d'environ 0,35 en validation à 0,20 sur le
-  classement final. La fiabilité baisse là où personne n'a encore prospecté, c'est-à-dire là où on
-  voudrait justement s'en servir.
+- **Mesuré** : le score F1 passe de 0,200 pour le modèle de départ à 0,23389 pour l'assemblage final
+  (`results/scores_kaggle.json`). À ce niveau, la liste prédite sert à orienter une sortie de terrain ;
+  elle ne remplace pas un inventaire et ne dispense d'aucune vérification humaine.
+- **Mesuré** : le score tombe de 0,3459 en validation spatiale
+  (`results/validation/adrian_asym_globalnorm_clean_fold0.json`) à 0,20227 sur le classement final
+  (`results/scores_kaggle.json`), alors que 67,4 % des points de test sont à plus de 10 km des zones
+  d'entraînement (section Données). La fiabilité baisse là où personne n'a encore prospecté, c'est-à-dire
+  là où on voudrait justement s'en servir. C'est la limite qui compterait pour un commanditaire.
 
 ## Limites et pistes d'amélioration
 
