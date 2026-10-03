@@ -4,7 +4,7 @@ titre: "Prix de l'immobilier dans l'Hérault"
 ordre: 3
 categorie: 'Analyse et BI'
 famille: analyse
-resume: "Cinq ans de ventes immobilières de l'Hérault (Demandes de valeurs foncières, 412 496 lignes brutes) transformées en indicateurs publiables : nettoyage chiffré sous DuckDB, prix médians au m² avec intervalles de confiance, rapport Power BI dont les 20 mesures DAX sont contrôlées contre le SQL, et une démo Streamlit qui tourne dans le navigateur."
+resume: "Cinq ans de ventes immobilières de l'Hérault (Demandes de valeurs foncières, 412 496 lignes brutes) nettoyées règle par règle sous DuckDB, puis ramenées à des prix médians au m² avec intervalles de confiance. Le résultat se lit dans un rapport Power BI dont les 20 mesures DAX sont contrôlées contre le SQL, et dans une démo Streamlit qui tourne dans le navigateur."
 statut: publie
 motif: bars
 stack: ['Python', 'DuckDB', 'SQL', 'pandas', 'Power BI', 'DAX', 'TMDL', 'Streamlit', 'stlite', 'uv']
@@ -22,9 +22,9 @@ metriques:
 
 ## Contexte et problème
 
-« Est-ce le bon moment pour acheter, et à quel prix dans ma commune ? » Un acheteur, une agence et une collectivité
-posent la même question avec des enjeux différents : arbitrer un achat, fixer un prix de mise en vente, suivre la
-tension du marché local. La réponse existe en open data : les Demandes de valeurs foncières (DVF) contiennent toutes
+« Est-ce le bon moment pour acheter, et à quel prix dans ma commune ? » Un acheteur ne pose pas cette question
+pour la même raison qu'une agence ou qu'une collectivité : arbitrer un achat, fixer un prix de mise en vente,
+suivre la tension du marché local. La réponse existe en open data : les Demandes de valeurs foncières (DVF) contiennent toutes
 les ventes immobilières enregistrées par la DGFiP.
 
 Elles sont inexploitables telles quelles. Une vente s'étale sur plusieurs lignes (une par local et par nature de
@@ -32,14 +32,14 @@ culture du terrain) et la valeur foncière est répétée sur chacune : la somme
 fois. Les ventes de garages, de terrains nus et de lots de dix appartements se mélangent aux ventes de logements.
 Des prix au m² à 50 euros côtoient des prix à 50 000 euros.
 
-Ce projet fait le trajet complet sur le département de l'Hérault, de 2021 à 2025 : nettoyer en justifiant et en
-comptant chaque retrait, produire des indicateurs stables, et livrer le résultat sous deux formes utilisables,
-un modèle Power BI documenté et une démo publique consultable sans rien installer.
+J'ai fait le trajet complet sur le département de l'Hérault, de 2021 à 2025. Chaque retrait du nettoyage est
+justifié et compté, chaque indicateur arrive avec son incertitude, et le résultat existe sous deux formes :
+un modèle Power BI documenté et une démo publique qui ne demande rien à installer.
 
 ## Données
 
 - **Source** : DVF géolocalisées d'Etalab, fichiers départementaux annuels `34.csv.gz`, téléchargés par script et
-  jamais commités. Millésimes disponibles au 22/09/2026 : **2021 à 2025** (le serveur conserve cinq années
+  jamais commités. Millésimes disponibles au 22/09/2026 : 2021 à 2025 (le serveur conserve cinq années
   glissantes), fichiers publiés le 18/05/2026. Les empreintes SHA-256 des cinq fichiers sont dans
   `results/sources.json`.
 - **Volume** : 412 496 lignes brutes, 178 905 mutations, 342 communes ; les ventes retenues vont du 04/01/2021 au
@@ -53,8 +53,8 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
   d'achèvement), valeur foncière positive (156), aucun local commercial dans la mutation (8 414), au moins un
   logement (37 962, la règle la plus lourde : terrains, parkings et caves vendus seuls), un seul logement
   (5 229, faute de pouvoir ventiler un prix global), surface bâtie entre 9 et 1 000 m² (19), puis prix au m²
-  aberrants (4 891). Il reste **105 463 ventes, 58,9 % des mutations**.
-- **Règle des aberrants** : bornes de Tukey (Q1 - 1,5 IQR ; Q3 + 1,5 IQR) appliquées au **logarithme** du prix au
+  aberrants (4 891). Il reste 105 463 ventes, soit 58,9 % des mutations.
+- **Règle des aberrants** : bornes de Tukey (Q1 - 1,5 IQR ; Q3 + 1,5 IQR) appliquées au logarithme du prix au
   m², par type de bien et par année. Sans logarithme, la borne basse serait négative et ne retirerait rien ; avec,
   90 % des retraits (4 405 sur 4 891) se font par le bas, là où se trouvent les cessions entre proches, les parts
   indivises et les erreurs de surface.
@@ -63,20 +63,20 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 ## Approche
 
-1. **Téléchargement** scripté (`scripts/telecharger.py`), qui lit l'index du serveur pour découvrir les millésimes
-   et écrit un manifeste avec taille et empreinte.
-2. **Nettoyage et agrégation à la mutation** en SQL DuckDB, lu directement dans les `.csv.gz`, mémoire limitée à
-   600 Mo. Chaque règle est un pas séparé, compté avant et après.
-3. **Modèle en étoile et rapport Power BI** : `fait_ventes` (105 463 lignes), `dim_date`, `dim_commune`,
+1. Le téléchargement est scripté (`scripts/telecharger.py`) : il lit l'index du serveur pour découvrir les
+   millésimes et écrit un manifeste avec taille et empreinte.
+2. Le nettoyage et l'agrégation à la mutation se font en SQL DuckDB, lu directement dans les `.csv.gz`, mémoire
+   limitée à 600 Mo. Chaque règle est un pas séparé, compté avant et après.
+3. Le modèle en étoile alimente le rapport Power BI : `fait_ventes` (105 463 lignes), `dim_date`, `dim_commune`,
    `dim_type_bien`, exportés en Parquet, et un projet Power BI versionnable (`.pbip`) dont le modèle sémantique est
    écrit en TMDL et les 20 mesures DAX générées depuis `powerbi/mesures.dax`, ouvert et actualisé dans Power BI
    Desktop 2.157.1354.0.
-4. **Indicateurs** calculés sur ce modèle, avec les mêmes définitions que les mesures DAX : médianes par année,
-   type et commune, volumes, évolutions, seuil de publication à 30 ventes.
-5. **Incertitude** : intervalles de confiance à 95 % de chaque médiane et de chaque évolution par bootstrap
-   (2 000 rééchantillons, graine fixée), calculés par lots de 100 pour tenir dans la mémoire disponible.
-6. **Livraison** : notebook exécuté de bout en bout, quatre graphiques, démo Streamlit publiée via stlite
-   (Streamlit compilé en WebAssembly) sur GitHub Pages, donc sans serveur ni compte tiers.
+4. Les indicateurs sont calculés sur ce modèle, avec les mêmes définitions que les mesures DAX : médianes par
+   année, type et commune, volumes, évolutions, seuil de publication à 30 ventes.
+5. Chaque médiane et chaque évolution reçoit un intervalle de confiance à 95 % par bootstrap (2 000
+   rééchantillons, graine fixée), calculé par lots de 100 pour tenir dans la mémoire disponible.
+6. Côté livraison : un notebook exécuté de bout en bout, quatre graphiques, et la démo Streamlit publiée via
+   stlite (Streamlit compilé en WebAssembly) sur GitHub Pages, donc sans serveur ni compte tiers.
 
 ## Choix techniques
 
@@ -104,7 +104,7 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 
 ![Nombre de ventes retenues par année et par type de bien](/images/projets/data-analyst/volumes-annuels.png)
 
-- **Le littoral décide des prix, pas la métropole.** En 2025, parmi les 25 communes publiables pour les
+- **Le haut du classement est littoral, et Montpellier n'y figure pas.** En 2025, parmi les 25 communes publiables pour les
   appartements : La Grande-Motte 5 232 €/m², Palavas-les-Flots 4 895 €/m², Béziers 1 833 €/m², soit un rapport de
   2,9 entre les extrêmes. Montpellier (3 425 €/m²) n'est que 17e, dépassée par Sète (3 497 €/m²), qui était
   277 €/m² en dessous en 2021 (2 898 contre 3 175 €/m²).
@@ -112,18 +112,18 @@ un modèle Power BI documenté et une démo publique consultable sans rien insta
 ![Prix médian au m² des appartements à Montpellier, Sète et Béziers de 2021 à 2025](/images/projets/data-analyst/trois-villes.png)
 
 - **Les communes les moins chères sont celles qui ont le plus augmenté.** Corrélation de rang de Spearman
-  **-0,61 [-0,71 ; -0,47]** pour les appartements (22 communes) et **-0,25 [-0,38 ; -0,13]** pour les maisons
-  (82 communes), le prix de départ et le dénominateur de l'évolution étant estimés sur **deux moitiés disjointes**
+  -0,61 [-0,71 ; -0,47] pour les appartements (22 communes) et -0,25 [-0,38 ; -0,13] pour les maisons
+  (82 communes), le prix de départ et le dénominateur de l'évolution étant estimés sur deux moitiés disjointes
   des ventes de 2021 (200 tirages, `results/rattrapage_split_sample.csv`).
   Ce détour est nécessaire : la corrélation brute entre le prix de 2021 et l'évolution `prix_2025 / prix_2021 - 1`
   (-0,65 et -0,32) fait apparaître le prix de 2021 dans les deux variables, au numérateur de l'une et au
   dénominateur de l'autre. Ce couplage mathématique suffit à produire une corrélation négative par le seul bruit
   d'échantillonnage, et un test de permutation ne l'écarte pas, puisqu'il détruit justement le couplage qu'il
-  faudrait tester. Estimer les deux quantités sur des ventes disjointes rend les bruits indépendants : la
-  corrélation reste négative sur les 200 tirages, et le rattrapage est établi plutôt que supposé.
+  faudrait tester. Estimer les deux quantités sur des ventes disjointes rend les bruits indépendants, et la
+  corrélation reste négative sur les 200 tirages.
 - **Le rapport Power BI affiche les mêmes chiffres.** Le projet `.pbip` ouvert dans Power BI Desktop
   2.157.1354.0 charge les 105 463 ventes et évalue ses 20 mesures DAX. Interrogées directement dans le moteur puis
-  comparées au même calcul en SQL : 129 comparaisons, 15 mesures, 10 contextes de filtre, **aucune différence**
+  comparées au même calcul en SQL : 129 comparaisons, 15 mesures, 10 contextes de filtre, aucune différence
   (écart relatif maximal 4,8e-14, soit l'arrondi des flottants).
 
 ![Le rapport Power BI ouvert dans Power BI Desktop : cartes, courbe des prix, volumes et tableau par année](/images/projets/data-analyst/rapport-power-bi.png)
@@ -147,8 +147,8 @@ situe vraiment une commune cette année, et sur combien de ventes repose ce chif
 - **Mesuré** : la chaîne se rejoue en environ 1 min 30 sur un portable ordinaire, téléchargement exclu
   (`scripts/pipeline.py`). À chaque nouvelle publication DVF, les indicateurs sont refaits le jour même.
 - **Mesuré** : les 20 indicateurs du rapport Power BI ont été comparés au même calcul SQL sur
-  129 combinaisons, sans aucune différence (`results/concordance_dax_powerbi.csv`). Un chiffre montré en
-  réunion a été vérifié contre sa source.
+  129 combinaisons, sans aucune différence (`results/concordance_dax_powerbi.csv`), donc un chiffre montré
+  en réunion se retrace jusqu'à sa source.
 - **Estimé, au conditionnel** : en supposant qu'un analyste mette une demi-journée à refaire ce
   dédoublonnage et ces médianes à la main à chaque millésime, ordre de grandeur courant dans un service
   d'études, la chaîne ramènerait ce travail à une minute et demie de calcul, plus la relecture.

@@ -6,9 +6,11 @@ gsap.registerPlugin(ScrollTrigger);
 const EASE = 'power3.out';
 const onEnter = (trigger: Element) => ({ trigger, start: 'top 88%', once: true });
 
-// Tout le contenu est visible sans JavaScript ; les animations ne s'exécutent
-// que si l'utilisateur n'a pas demandé à réduire les mouvements.
-gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+// Tout le contenu est visible sans JavaScript. Les animations ne s'exécutent que sur grand
+// écran et si l'utilisateur n'a pas demandé à réduire les mouvements : sur téléphone, une
+// apparition au défilement laisse des blocs vides quand le script tarde ou quand une capture
+// d'écran fige la page, et le contenu prime sur l'effet.
+gsap.matchMedia().add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
   gsap.fromTo(
     '[data-hero-char]',
     // y: 0 annule la translation CSS initiale, que GSAP convertirait sinon en pixels.

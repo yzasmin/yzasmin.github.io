@@ -6,6 +6,10 @@ import { families } from '../data/profile';
 import { url } from '../lib/url';
 
 const projets = (await getCollection('projets')).sort((a, b) => a.data.ordre - b.data.ordre);
+
+// Le titre compte les fiches : il reste juste quand un projet est ajouté.
+const nombresEnLettres = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'];
+const nombre = nombresEnLettres[projets.length] ?? String(projets.length);
 ---
 
 <section id="projets" aria-labelledby="projets-titre" class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-24">
@@ -13,8 +17,8 @@ const projets = (await getCollection('projets')).sort((a, b) => a.data.ordre - b
     id="projets-titre"
     fig="03"
     label="Projets"
-    title="Six figures, six méthodes."
-    intro="Chaque fiche suit le même protocole : contexte, données, approche, choix techniques justifiés, résultats, limites. Ouvrez-les pour juger du détail."
+    title={`${nombre.charAt(0).toUpperCase()}${nombre.slice(1)} projets, ${nombre} méthodes.`}
+    intro="Chaque fiche raconte le même chemin : le problème posé, les données réelles, ce que j'ai essayé, pourquoi cet outil plutôt qu'un autre, les résultats chiffrés et ce qui reste à faire."
   />
 
   <ol class="grid gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-3">

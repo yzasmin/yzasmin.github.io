@@ -1,10 +1,10 @@
 ---
 slug: challenge-kaggle
-titre: 'Challenge Kaggle'
+titre: 'Quelles plantes poussent ici ? Challenge Kaggle GeoLifeCLEF'
 ordre: 2
 categorie: 'Deep learning multimodal'
 famille: science
-resume: "Deep Learning Challenge MIASHS 2026 sur les données GeoLifeCLEF 2025 : prédire les espèces végétales présentes en un point d'Europe à partir d'images Sentinel-2, de séries Landsat et climatiques et de variables environnementales. Modèle multimodal conçu en équipe de cinq, 1re des 4 équipes."
+resume: "Deviner quelles espèces végétales poussent en un point d'Europe à partir d'images Sentinel-2, de séries Landsat et climatiques et de variables environnementales : c'était le Deep Learning Challenge MIASHS 2026, sur les données GeoLifeCLEF 2025. Modèle multimodal construit en équipe de cinq, 1re des 4 équipes."
 statut: publie
 motif: scatter
 stack: ['Python', 'PyTorch', 'torchvision', 'EfficientNet-B3', 'Transformer', 'Kaggle', 'uv']
@@ -40,7 +40,7 @@ explications par LLM).
 - **Prédicteurs** : image Sentinel-2 64 x 64 pixels à 4 canaux (RGB et proche infrarouge), séries Landsat (21 années
   x 24 variables), séries bioclimatiques (12 pas x 76 variables), 64 variables environnementales et 57 variables
   auxiliaires (coordonnées, année, pays et région encodés).
-- **Le vrai problème, géographique** : 67,4 % des relevés de test sont à plus de 10 km des données
+- **Le décalage géographique** : 67,4 % des relevés de test sont à plus de 10 km des données
   d'entraînement. Le Danemark fait 55 % de l'entraînement pour environ 5 % du test ; l'Ukraine, la Bulgarie et
   le Royaume-Uni font 20 %, 22 % et 6 % du test pour environ 0 % de l'entraînement.
 - **Licence** : jeu de données GeoPlant sous CC BY 4.0 (Picek et al., NeurIPS 2024). Rien n'est redistribué dans
@@ -52,23 +52,24 @@ Le modèle de départ d'Adrian fusionne cinq branches : un encodeur d'image, deu
 Landsat et climatiques, deux MLP pour les variables tabulaires, chacune réduite à 128 dimensions, puis une tête de
 fusion qui produit un logit par espèce. Il obtenait 0,200 sur le classement public.
 
-**V1, l'entraînement avant l'architecture.** Sans toucher au modèle, la version V1 (dossier `yasmina/` du dépôt)
-entraîne cinq modèles sur cinq plis de validation spatiale et moyenne leurs logits, avec warmup de 3 époques puis
-décroissance cosinus, précision mixte, clipping de gradient et 50 époques. Résultat : 0,22793. La présentation
-note que ce gain vient surtout de l'ensemble, et qu'un plafond est atteint sans changer l'architecture.
+Pour la V1, j'ai travaillé l'entraînement avant de toucher à l'architecture. Sans rien changer au modèle, cette
+version (dossier `yasmina/` du dépôt) entraîne cinq modèles sur cinq plis de validation spatiale et moyenne leurs
+logits, avec warmup de 3 époques puis décroissance cosinus, précision mixte, clipping de gradient et 50 époques.
+Résultat : 0,22793. La présentation note que ce gain vient surtout de l'ensemble, et qu'un plafond est atteint
+sans changer l'architecture.
 
-**La branche image.** Six encodeurs Sentinel-2 ont été comparés : un petit CNN, EfficientNet-B3, ResNet-50,
-ConvNeXt-Tiny, ConvNeXt-Tiny avec attention pooling et Swin-Tiny. EfficientNet-B3, pré-entraîné sur ImageNet et
-adapté à 4 canaux (le canal proche infrarouge reprend les poids du rouge), a été retenu.
+Vient ensuite la branche image. Nous avons comparé six encodeurs Sentinel-2 : un petit CNN, EfficientNet-B3,
+ResNet-50, ConvNeXt-Tiny, ConvNeXt-Tiny avec attention pooling et Swin-Tiny. Nous avons gardé EfficientNet-B3,
+pré-entraîné sur ImageNet et adapté à 4 canaux (le canal proche infrarouge reprend les poids du rouge).
 
-**Le pré-entraînement Presence-Only.** Les encodeurs tabulaires sont d'abord entraînés sur les 5 millions
-d'observations Presence-Only (tâche à une seule étiquette), puis le modèle complet est affiné sur les relevés
-Presence-Absence : 0,233.
+Troisième pièce, le pré-entraînement Presence-Only. Les encodeurs tabulaires sont d'abord entraînés sur
+les 5 millions d'observations Presence-Only (tâche à une seule étiquette), puis le modèle complet est affiné sur
+les relevés Presence-Absence : 0,233.
 
-**Le nombre d'espèces par relevé** n'est pas fixe : il vaut la somme des probabilités multipliée par un facteur
-calibré sur la validation, borné entre 1 et 50.
+Le nombre d'espèces rendues par relevé n'est pas fixe : il vaut la somme des probabilités multipliée par un
+facteur calibré sur la validation, borné entre 1 et 50.
 
-**L'ensemble final** moyenne les logits de 10 modèles, 5 de la V1 et 5 de la V6. D'après la présentation, la V1 est
+L'ensemble final moyenne les logits de 10 modèles, 5 de la V1 et 5 de la V6. D'après la présentation, la V1 est
 forte sur les régions bien couvertes et la V6 sur les régions hors distribution ; leurs biais se compensent :
 0,23389.
 
@@ -76,14 +77,14 @@ forte sur les régions bien couvertes et la V6 sur les régions hors distributio
 
 ## Choix techniques
 
-| Choix                                                | Plutôt que                                      | Pourquoi                                                                                                                                        |
-| ---------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| EfficientNet-B3 à 4 canaux (environ 12 M paramètres) | ResNet-50, ConvNeXt-Tiny, Swin-Tiny (23 à 31 M) | Meilleur compromis performance, stabilité et coût ; ResNet-50 plus lourd sans gain net, ConvNeXt moins stable selon les plis, Swin pas meilleur |
-| Validation spatiale en 5 plis (blocs de 1 degré)     | Découpage aléatoire                             | Le test est géographiquement éloigné de l'entraînement : un découpage aléatoire surestimerait le score                                          |
-| Moyenne des logits de 10 modèles (V1 + V6)           | Un seul modèle                                  | Réduit la variance ; V1 et V6 ont des erreurs complémentaires (dans et hors distribution)                                                       |
-| Pré-entraînement Presence-Only court : 5 époques     | 15 époques                                      | 0,233 contre 0,175 : au-delà, les encodeurs se sur-spécialisent sur la tâche Presence-Only                                                      |
-| 7 variables auxiliaires pour le pré-entraînement     | 57 variables                                    | 0,233 contre 0,226 : plus de variables n'aidait pas le transfert                                                                                |
-| Nombre d'espèces calibré par relevé                  | Top-k fixe                                      | La richesse varie fortement d'un site à l'autre ; le facteur est optimisé pour le F1 sur la validation                                          |
+| Choix                                                | Plutôt que                                      | Pourquoi                                                                                                                      |
+| ---------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| EfficientNet-B3 à 4 canaux (environ 12 M paramètres) | ResNet-50, ConvNeXt-Tiny, Swin-Tiny (23 à 31 M) | Le meilleur compromis à l'essai : ResNet-50 plus lourd sans gain net, ConvNeXt moins stable selon les plis, Swin pas meilleur |
+| Validation spatiale en 5 plis (blocs de 1 degré)     | Découpage aléatoire                             | Le test est géographiquement éloigné de l'entraînement : un découpage aléatoire surestimerait le score                        |
+| Moyenne des logits de 10 modèles (V1 + V6)           | Un seul modèle                                  | Réduit la variance ; V1 et V6 ont des erreurs complémentaires (dans et hors distribution)                                     |
+| Pré-entraînement Presence-Only court : 5 époques     | 15 époques                                      | 0,233 contre 0,175 : au-delà, les encodeurs se sur-spécialisent sur la tâche Presence-Only                                    |
+| 7 variables auxiliaires pour le pré-entraînement     | 57 variables                                    | 0,233 contre 0,226 : plus de variables n'aidait pas le transfert                                                              |
+| Nombre d'espèces calibré par relevé                  | Top-k fixe                                      | La richesse varie fortement d'un site à l'autre ; le facteur est optimisé pour le F1 sur la validation                        |
 
 ## Résultats et métriques
 
@@ -94,7 +95,7 @@ forte sur les régions bien couvertes et la V6 sur les régions hors distributio
 | Pré-entraînement Presence-Only, 5 époques | 0,233          |
 | Ensemble final V1 + V6, 10 modèles        | 0,23389        |
 
-Au classement final, notre équipe (« Groupe1 ») termine **1re des 4 équipes** avec 0,20227, devant 0,19235,
+Au classement final, notre équipe (« Groupe1 ») termine 1re des 4 équipes avec 0,20227, devant 0,19235,
 0,18840 et 0,18813. Une ligne « Baseline participant random » figure au-dessus de toutes les équipes, à 0,21495.
 
 ![Classement final du challenge, avec la ligne de référence au-dessus des quatre équipes](/images/projets/challenge-kaggle/classement-final.png)
@@ -104,7 +105,7 @@ le code de validation calcule un F1 par relevé moyenné sur les relevés, la m�
 En validation spatiale interne, les modèles atteignaient environ 0,35 : l'écart avec Kaggle mesure le coût du
 décalage géographique.
 
-Le dépôt republié contient le code des cinq membres, les chemins de serveur remplacés par des variables
+Le dépôt republié rassemble le code des cinq membres, avec les chemins de serveur remplacés par des variables
 d'environnement, un environnement uv et un test de fumée qui instancie les architectures et vérifie une sortie de
 5 016 logits sur tenseurs aléatoires, sans données ni GPU (6 tests réussis sur un portable).
 
@@ -118,8 +119,8 @@ environnement préparant un inventaire floristique, pour décider où envoyer le
   point une liste dont la longueur est calibrée relevé par relevé, entre 1 et 50 espèces
   (`results/scores_kaggle.json`).
 - **Mesuré** : le score F1 passe de 0,200 pour le modèle de départ à 0,23389 pour l'assemblage final.
-  À ce niveau, une liste prédite est une piste de terrain, pas un inventaire : elle ne dispense d'aucune
-  vérification humaine.
+  À ce niveau, la liste prédite sert à orienter une sortie de terrain ; elle ne remplace pas un inventaire
+  et ne dispense d'aucune vérification humaine.
 - **Mesuré, et c'est la limite qui compterait pour un commanditaire** : 67,4 % des points de test sont à
   plus de 10 km des zones d'entraînement, et le score y tombe d'environ 0,35 en validation à 0,20 sur le
   classement final. La fiabilité baisse là où personne n'a encore prospecté, c'est-à-dire là où on

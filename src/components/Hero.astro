@@ -1,6 +1,9 @@
 ---
+import { getCollection } from 'astro:content';
 import { cvFiles, families, person, search } from '../data/profile';
 import { url } from '../lib/url';
+
+const nombreProjets = (await getCollection('projets')).length;
 
 const nameLines = [person.firstName, `${person.lastName}.`];
 
@@ -14,8 +17,8 @@ const searchItems = [
 const facts = [
   { label: 'Diplôme', value: 'Master MIASHS, mention Bien' },
   { label: 'Certification', value: 'NVIDIA, Generative AI with Diffusion Models' },
-  { label: 'Expérience', value: "2 ans d'alternance data, 5 ans d'activité indépendante" },
-  { label: 'Code public', value: '6 projets documentés, chiffres vérifiables' },
+  { label: 'Expérience data', value: "2 ans chez Groupe Angelotti (Nexity), 5 ans d'activité indépendante" },
+  { label: 'Code public', value: `${nombreProjets} projets documentés, chiffres vérifiables` },
 ];
 ---
 

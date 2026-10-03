@@ -5,9 +5,10 @@ interface Props {
   label: string;
   title: string;
   intro?: string;
+  introLink?: { href: string; label: string };
 }
 
-const { id, fig, label, title, intro } = Astro.props;
+const { id, fig, label, title, intro, introLink } = Astro.props;
 ---
 
 <div class="mb-10 md:mb-14">
@@ -25,6 +26,14 @@ const { id, fig, label, title, intro } = Astro.props;
     {intro && (
       <p class="max-w-xl text-lg text-ink-2 lg:col-span-5" data-reveal>
         {intro}
+        {introLink && (
+          <>
+            {' '}
+            <a href={introLink.href} class="link-underline text-ink underline-offset-4 hover:text-signal">
+              {introLink.label}
+            </a>
+          </>
+        )}
       </p>
     )}
   </div>

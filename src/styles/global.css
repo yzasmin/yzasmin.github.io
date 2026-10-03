@@ -114,8 +114,10 @@ body::before {
   border-radius: 2px;
 }
 
-/* État initial du hero avant l'animation GSAP (évite un flash au chargement) */
-@media (prefers-reduced-motion: no-preference) {
+/* État initial du hero avant l'animation GSAP (évite un flash au chargement).
+   Même seuil que src/scripts/motion.ts : sous 768 px, aucune animation ne tourne,
+   donc rien ne doit être masqué. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
   html.js [data-hero-char] {
     transform: translateY(105%);
   }
