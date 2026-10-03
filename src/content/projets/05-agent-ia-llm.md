@@ -101,7 +101,8 @@ La génération tourne en local, avec un modèle ouvert servi par Ollama au lieu
 première mesure, sur les 37 questions du jeu d'évaluation avec Qwen2.5 1,5 milliard de paramètres quantifié
 en Q4_K_M, est franchement mauvaise, et je la publie telle quelle : le modèle ne répond qu'à 3,1 % des
 questions du périmètre, refuse toutes les autres, rend 32 réponses sur 37 sans aucune citation, et met
-62,5 secondes par question en médiane (`results/generation_metrics.json`). Il refuse bien 100 % des
+62,5 secondes par question en médiane. Ces chiffres de génération viennent d'une exécution locale que je n'ai
+pas encore publiée dans le dépôt, contrairement à ceux de la récupération. Il refuse bien 100 % des
 questions hors périmètre, ce qui ne coûte pas cher quand on refuse presque tout.
 
 Le montage est peut-être autant en cause que le modèle : une boucle d'appel d'outils demande beaucoup à
