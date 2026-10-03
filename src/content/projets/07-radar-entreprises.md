@@ -39,8 +39,8 @@ réalité des transferts de siège. Les compter telles quelles aurait ajouté 17
 
 J'ai donc construit la brique manquante : un graphe quotidien qui capte ce flux, le normalise, le
 rattache à une commune et à un secteur, refuse de publier si les données ne passent pas les
-contrôles, et livre des indicateurs interrogeables en SQL. C'est le seul projet du portfolio qui
-fait tourner un ordonnanceur, un stockage objet et un entrepôt interrogeable en SQL.
+contrôles, et livre des indicateurs interrogeables en SQL. C'est le seul projet du portfolio à
+faire tourner un ordonnanceur, un stockage objet et un entrepôt de données.
 
 ## Données
 
@@ -181,8 +181,8 @@ supposée : personne n'a chronométré ce dépouillement manuel.
 
 **Erreur de comptage évitée.** Celle-ci est mesurée, pas estimée : compter les familles d'avis
 brutes du BODACC aurait ajouté 177 fausses créations aux 609 réelles sur la fenêtre, soit
-29,1 % de surestimation des ouvertures : dans un tableau de bord construit sans cette
-normalisation, ce sont des transferts de siège qui passent pour des entreprises nouvelles.
+29,1 % de surestimation des ouvertures. Sans cette normalisation, un tableau de bord présente ces
+transferts de siège comme des entreprises nouvelles.
 
 ### Ce que ce projet ne permet pas de dire
 
