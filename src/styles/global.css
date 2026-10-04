@@ -70,6 +70,10 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+  /* Safari iOS calcule la largeur de la page au niveau de html : sans cette ligne, un
+     dépassement de quelques pixels rend toute la page glissante de côté sur iPhone.
+     clip plutôt que hidden, qui casserait l'en-tête collant. */
+  overflow-x: clip;
 }
 
 body {
@@ -225,15 +229,28 @@ body::before {
     border-color: var(--signal);
     border-style: solid;
   }
+  /* Les crochets restent à l'intérieur du cadre sur petit écran : débordants, ils
+     élargissaient la page de quelques pixels, et Safari iOS compte ce dépassement dans la
+     largeur du document, ce qui rendait la page glissante latéralement sur iPhone. */
   .brackets::before {
-    top: -7px;
-    left: -7px;
+    top: 0;
+    left: 0;
     border-width: 2px 0 0 2px;
   }
   .brackets::after {
-    bottom: -7px;
-    right: -7px;
+    bottom: 0;
+    right: 0;
     border-width: 0 2px 2px 0;
+  }
+  @media (min-width: 768px) {
+    .brackets::before {
+      top: -7px;
+      left: -7px;
+    }
+    .brackets::after {
+      bottom: -7px;
+      right: -7px;
+    }
   }
 
   /* Graduations d'axe */
@@ -331,10 +348,12 @@ body::before {
   background: none;
   padding: 0;
 }
+/* width: 100% et non max-content : avec max-content, Safari garde la largeur naturelle
+   du tableau et pousse la page au lieu de la faire défiler dans le cadre. */
 .prose-projet table {
   display: block;
   max-width: 100%;
-  width: max-content;
+  width: 100%;
   overflow-x: auto;
   margin: 0 0 1.5rem;
   border-collapse: collapse;

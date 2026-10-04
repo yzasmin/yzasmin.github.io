@@ -46,7 +46,7 @@ const graphNodes = Array.from({ length: 9 }, (_, index) => ({
 const pipelineStages = ['ingest', 'clean', 'model', 'serve'];
 ---
 
-<svg viewBox={`0 0 ${W} ${H}`} class="h-full w-full" aria-hidden="true" focusable="false">
+<svg viewBox={`0 0 ${W} ${H}`} class="block h-full w-full max-w-full" aria-hidden="true" focusable="false">
   <g stroke="var(--rule)" stroke-width="1">
     <line x1={PAD} y1={H - PAD} x2={W - PAD} y2={H - PAD}></line>
     <line x1={PAD} y1={PAD} x2={PAD} y2={H - PAD}></line>

@@ -21,7 +21,9 @@ const nombre = nombresEnLettres[projets.length] ?? String(projets.length);
     intro="Chaque fiche raconte le même chemin : le problème posé, les données réelles, ce que j'ai essayé, pourquoi cet outil plutôt qu'un autre, les résultats chiffrés et ce qui reste à faire."
   />
 
-  <ol class="grid gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-3">
+  {/* grid-cols-1 explicite : sans lui, Safari dimensionne la colonne sur la largeur minimale
+      du graphique SVG de la carte et la page déborde de l'écran sur iPhone. */}
+  <ol class="grid grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-3">
     {projets.map((projet) => {
       const color = families[projet.data.famille].color;
       const numero = String(projet.data.ordre).padStart(2, '0');
