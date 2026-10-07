@@ -53,13 +53,13 @@ export const valueProps = [
 ];
 
 export const aboutClosing =
-  "Le Master MIASHS a donné le socle mathématique et statistique. Le deep learning, le NLP et les LLM sont venus avec les projets, et cinq ans à mon compte ont appris le reste : écouter un besoin, le chiffrer, livrer, puis former les gens qui s'en servent.";
+  "Le socle est mathématique et statistique. Le deep learning, le NLP et les LLM sont venus avec les projets, et cinq ans à mon compte ont appris le reste : écouter un besoin, le chiffrer, livrer, puis former les gens qui s'en servent.";
 
 export const stats = [
   { value: 2, prefix: '', suffix: ' ans', label: 'en data chez Groupe Angelotti, filiale de Nexity' },
   { value: 5, prefix: '', suffix: ' ans', label: 'à diriger ma propre activité : cadrer, chiffrer, livrer, former' },
   { value: 30, prefix: '~', suffix: '', label: 'rapports et tableaux de bord Power BI pour 5 services métier' },
-  { value: 1, prefix: '', suffix: 're', label: 'des 4 équipes au Deep Learning Challenge MIASHS 2026' },
+  { value: 1, prefix: '', suffix: 're', label: 'des 4 équipes au challenge Kaggle de deep learning 2026' },
 ];
 
 export const softSkills = [
@@ -145,24 +145,6 @@ export const timeline = {
       ],
     },
     {
-      title: 'Licence MIASHS, mention Assez Bien',
-      org: 'Université Paul Valéry Montpellier 3',
-      dates: '2020 à 2024',
-      from: 2020.7,
-      to: 2024.5,
-      family: 'analyse' as Family,
-      points: [],
-    },
-    {
-      title: 'Master MIASHS, mention Bien',
-      org: 'Université Paul Valéry Montpellier 3',
-      dates: '2024 à 2026',
-      from: 2024.7,
-      to: 2026.6,
-      family: 'science' as Family,
-      points: [],
-    },
-    {
       title: 'Data Analyst / Data Engineer',
       org: 'Groupe Angelotti (filiale Nexity), Béziers',
       dates: '10/2024 à 10/2026',
@@ -177,9 +159,15 @@ export const timeline = {
       ],
     },
   ],
-  milestones: [{ label: '1re place, Deep Learning Challenge MIASHS', date: 'Avril 2026', at: 2026.29 }],
+  milestones: [{ label: '1re des 4 équipes, challenge Kaggle de deep learning', date: 'Avril 2026', at: 2026.29 }],
   certifications: [{ label: 'Generative AI with Diffusion Models', issuer: 'NVIDIA', date: '2026' }],
 };
+
+// Diplôme affiché hors du diagramme : le site met en avant l'expérience et le niveau, pas le
+// calendrier des études (conseil d'un recruteur, octobre 2026). Le détail se donne en entretien.
+export const education = [
+  { title: 'Master MIASHS, mathématiques et informatique appliquées', org: 'Université Paul Valéry Montpellier 3' },
+];
 
 export const cvFiles = [
   { label: 'Data Scientist / Data Analyst', file: 'cv/CV-Yasmina-Saoud-Data-Scientist.pdf' },

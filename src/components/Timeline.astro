@@ -1,6 +1,6 @@
 ---
 import SectionHead from './SectionHead.astro';
-import { families, timeline } from '../data/profile';
+import { education, families, timeline } from '../data/profile';
 
 const { start, end, rows, milestones, certifications } = timeline;
 const span = end - start;
@@ -18,8 +18,8 @@ const experiences = rows.filter((row) => row.points.length > 0).reverse();
     id="parcours-titre"
     fig="04"
     label="Parcours"
-    title="Sept ans d'études, d'entreprise et d'activité indépendante, en parallèle."
-    intro="Études, poste en entreprise et activité indépendante se sont superposés pendant sept ans. C'est ce chevauchement qui explique un profil à la fois technique et habitué au dialogue avec le métier."
+    title="Sept ans d'expérience, en entreprise et à mon compte."
+    intro="Deux ans en data chez Groupe Angelotti, filiale de Nexity, après cinq ans à mener ma propre activité. D'où un profil technique, habitué à parler avec les équipes métier."
   />
 
   <figure>
@@ -122,7 +122,18 @@ const experiences = rows.filter((row) => row.points.length > 0).reverse();
       ))}
     </div>
 
-    <aside class="lg:col-span-4" aria-label="Jalons et certifications">
+    <aside class="space-y-6 lg:col-span-4" aria-label="Formation, jalons et certifications">
+      <div class="border border-rule p-6" data-reveal>
+        <h3 class="mono-label">Formation</h3>
+        <ul class="mt-4 space-y-4">
+          {education.map((diplome) => (
+            <li>
+              <p class="font-display text-xl font-bold leading-tight">{diplome.title}</p>
+              <p class="mono-label mt-1 !normal-case !tracking-normal">{diplome.org}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div class="border border-rule p-6" data-reveal>
         <h3 class="mono-label">Jalons</h3>
         <ul class="mt-4 space-y-4">

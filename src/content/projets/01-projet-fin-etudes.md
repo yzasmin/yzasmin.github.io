@@ -1,17 +1,17 @@
 ---
-slug: projet-fin-etudes
+slug: emotions-contexte-scene
 titre: 'Lire une émotion dans le décor : EMOTIC et contexte de scène'
 ordre: 1
 categorie: 'Recherche, vision par ordinateur'
 famille: science
-resume: "Projet de fin d'études en binôme : nous avons greffé sur un modèle CNN de référence un vecteur de 114 dimensions qui décrit la scène (objets YOLO, couleurs, luminosité), pour reconnaître 26 émotions sur EMOTIC. Il se termine par une boucle de génération d'images guidée par l'émotion."
+resume: "Projet de recherche en binôme : nous avons greffé sur un modèle CNN de référence un vecteur de 114 dimensions qui décrit la scène (objets YOLO, couleurs, luminosité), pour reconnaître 26 émotions sur EMOTIC. Il se termine par une boucle de génération d'images guidée par l'émotion."
 statut: publie
 motif: poster
 stack: ['Python', 'PyTorch', 'torchvision', 'YOLOv8', 'scikit-learn', 'Stable Diffusion', 'Google Colab']
 liens:
   github: 'https://github.com/yzasmin/emotic-emotions-contexte'
   notebook: 'https://github.com/yzasmin/emotic-emotions-contexte/blob/main/notebooks/04_comparaison_BI_BIY.ipynb'
-teaser: 'video/projets/projet-fin-etudes.mp4'
+teaser: 'video/projets/emotions-contexte-scene.mp4'
 metriques:
   - { label: 'mAP B+I+Y, test EMOTIC (26 émotions)', valeur: '25,60 %' }
   - { label: 'Gain de la branche 114D sur B+I', valeur: '+0,49 pp' }
@@ -25,7 +25,7 @@ Plus de 25 % des images prises en milieu naturel ont des visages masqués ou tro
 Un modèle qui ne regarde que le visage est alors démuni, alors qu'un humain lit aussi le décor : une table dressée,
 un gant de baseball qui traîne.
 
-Avec Malala Ravalisaona, pour notre projet de fin d'études du Master MIASHS, nous avons posé deux questions.
+Avec Malala Ravalisaona, nous avons posé deux questions.
 La première est une question de performance : un vecteur explicite de 114 dimensions décrivant la scène
 améliore-t-il un modèle de référence qui combine un CNN sur la personne et un CNN sur l'image entière (B+I) ?
 La seconde porte sur l'interprétabilité : peut-on mesurer quels objets et quelles couleurs le modèle associe
@@ -54,7 +54,7 @@ pas dans le dépôt, qui documente la procédure d'accès.
 2. Le vecteur de scène fait 114 dimensions : 80 scores YOLO (confiance maximale par classe), 5 couleurs
    dominantes par K-means (15), un histogramme HSV (16) et luminosité, contraste, saturation (3).
 
-![Pipeline d'extraction du vecteur 114D](/images/projets/projet-fin-etudes/pipeline_114d.png)
+![Pipeline d'extraction du vecteur 114D](/images/projets/emotions-contexte-scene/pipeline_114d.png)
 
 3. Deux modèles, entraînés dans les mêmes conditions. B+I associe un EfficientNet-B2 sur la personne recadrée
    et un ResNet-50 sur l'image entière, fusionnés par une tête commune qui sort 26 logits et 3 valeurs VAD.
@@ -96,9 +96,9 @@ La branche de scène apporte +0,49 point de mAP, soit +1,9 % relatif. Le gain es
 modèle reste 1,8 point sous le papier original. Il est aussi inégal selon les émotions : Suffering, Sadness
 et Fatigue progressent le plus, Annoyance, Affection et Peace reculent.
 
-![AP par catégorie, B+I et B+I+Y](/images/projets/projet-fin-etudes/ap_par_categorie.png)
+![AP par catégorie, B+I et B+I+Y](/images/projets/emotions-contexte-scene/ap_par_categorie.png)
 
-![Gain d'AP par catégorie](/images/projets/projet-fin-etudes/gain_par_categorie.png)
+![Gain d'AP par catégorie](/images/projets/emotions-contexte-scene/gain_par_categorie.png)
 
 En VAD, la corrélation en valence s'améliore (0,248 contre 0,225), mais pas l'erreur absolue.
 La dominance reste la plus difficile (Pearson r = 0,31).
@@ -107,7 +107,7 @@ Du côté de l'interprétabilité, 1 235 paires objet × émotion sur 2 080 (59,
 prédictions du modèle, avec une corrélation maximale de 0,49. Quelques exemples : person et Yearning (+0,38),
 baseball glove et Confidence (+0,31), baseball glove et Affection (−0,32).
 
-![Matrice objet x émotion apprise par B+I+Y](/images/projets/projet-fin-etudes/matrice_objet_emotion.png)
+![Matrice objet x émotion apprise par B+I+Y](/images/projets/emotions-contexte-scene/matrice_objet_emotion.png)
 
 ## Impact métier
 

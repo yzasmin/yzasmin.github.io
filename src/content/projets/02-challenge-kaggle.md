@@ -4,7 +4,7 @@ titre: 'Quelles plantes poussent ici ? Challenge Kaggle GeoLifeCLEF'
 ordre: 2
 categorie: 'Deep learning multimodal'
 famille: science
-resume: "Deviner quelles espèces végétales poussent en un point d'Europe à partir d'images Sentinel-2, de séries Landsat et climatiques et de variables environnementales : c'était le Deep Learning Challenge MIASHS 2026, sur les données GeoLifeCLEF 2025. Modèle multimodal construit en équipe de cinq, 1re des 4 équipes."
+resume: "Deviner quelles espèces végétales poussent en un point d'Europe à partir d'images Sentinel-2, de séries Landsat et climatiques et de variables environnementales : c'était un challenge Kaggle de deep learning en 2026, sur les données GeoLifeCLEF 2025. Modèle multimodal construit en équipe de cinq, 1re des 4 équipes."
 statut: publie
 motif: scatter
 stack: ['Python', 'PyTorch', 'torchvision', 'EfficientNet-B3', 'Transformer', 'Kaggle', 'uv']
@@ -25,8 +25,8 @@ satellite Sentinel-2 de 640 m de côté, vingt ans de séries Landsat, des séri
 l'empreinte humaine, et doit rendre l'ensemble des espèces présentes. C'est de la classification multi-label
 extrême : 5 016 espèces possibles, 14 présentes par relevé en médiane.
 
-Le Challenge Deep Learning du Master MIASHS 2026 reprenait les données de la compétition GeoLifeCLEF 2025 dans une
-compétition Kaggle interne. Ce type de modèle sert à cartographier finement la biodiversité et à guider
+Le challenge, organisé sur Kaggle en 2026, reprenait les données de la compétition GeoLifeCLEF 2025 dans une
+compétition privée. Ce type de modèle sert à cartographier finement la biodiversité et à guider
 l'identification d'espèces sur le terrain. Nous étions cinq : Yasmina Saoud et Adrian Guilhem à la modélisation,
 Raihan Meguenni, Malala Ravalisaona et Guilhem Darde sur l'interprétation des données (serveur MCP, statistiques,
 explications par LLM).
@@ -111,7 +111,7 @@ d'environnement, un environnement uv et un test de fumée qui instancie les arch
 
 ## Impact métier
 
-Compétition interne de promotion, menée à cinq : rien n'a été livré à un utilisateur. Le destinataire
+Compétition privée sur Kaggle, menée à cinq : rien n'a été livré à un utilisateur. Le destinataire
 naturel d'un tel modèle serait une équipe de recherche en biodiversité ou un bureau d'études
 environnement préparant un inventaire floristique, pour décider où envoyer les botanistes en premier.
 
@@ -140,4 +140,4 @@ environnement préparant un inventaire floristique, pour décider où envoyer le
 - **Espèces rares** : 3 203 espèces ont moins de 10 occurrences dans le split d'entraînement d'un des pipelines.
 - **Reproductibilité partielle** : poids et soumissions n'ont pas été conservés, aucun script ne combine V1 et V6,
   et le script de pré-entraînement est resté réglé sur la variante à 15 époques. Les chiffres viennent de la
-  présentation de soutenance, pas d'une nouvelle exécution.
+  présentation finale, pas d'une nouvelle exécution.

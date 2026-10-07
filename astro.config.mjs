@@ -9,6 +9,10 @@ export default defineConfig({
   site: 'https://yzasmin.github.io',
   base: '/',
   trailingSlash: 'always',
+  // Ancienne adresse du projet 1, déjà partagée : elle renvoie vers la nouvelle.
+  redirects: {
+    '/projets/projet-fin-etudes/': '/projets/emotions-contexte-scene/',
+  },
   integrations: [mdx(), sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
