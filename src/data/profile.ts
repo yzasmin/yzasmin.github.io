@@ -44,7 +44,7 @@ export const valueProps = [
   },
   {
     title: 'Des rapports qui ne se refont plus à la main',
-    text: "Une trentaine de rapports et tableaux de bord Power BI pour cinq services métier, alimentés par des pipelines ETL sous SQL Server et des connecteurs vers l'ERP, des API REST et des bases SQL. Le temps passé à recopier des extractions repart vers l'analyse.",
+    text: "Une centaine de rapports et tableaux de bord Power BI pour cinq services métier, alimentés par des pipelines ETL sous SQL Server et des connecteurs vers l'ERP, des API REST et des bases SQL. Le temps passé à recopier des extractions repart vers l'analyse.",
   },
   {
     title: "Des analyses qu'on peut rejouer",
@@ -58,7 +58,7 @@ export const aboutClosing =
 export const stats = [
   { value: 2, prefix: '', suffix: ' ans', label: 'en data chez Groupe Angelotti, filiale de Nexity' },
   { value: 5, prefix: '', suffix: ' ans', label: 'à diriger ma propre activité : cadrer, chiffrer, livrer, former' },
-  { value: 30, prefix: '~', suffix: '', label: 'rapports et tableaux de bord Power BI pour 5 services métier' },
+  { value: 100, prefix: '~', suffix: '', label: 'rapports et tableaux de bord Power BI pour 5 services métier' },
   { value: 1, prefix: '', suffix: 're', label: 'des 4 équipes au challenge Kaggle de deep learning 2026' },
 ];
 
@@ -152,7 +152,7 @@ export const timeline = {
       to: 2026.75,
       family: 'engineering' as Family,
       points: [
-        'Une trentaine de rapports et tableaux de bord Power BI pour 5 services : commercial, juridique, contrôle de gestion, directions financière et opérationnelle.',
+        'Une centaine de rapports et tableaux de bord Power BI pour 5 services : commercial, juridique, contrôle de gestion, directions financière et opérationnelle.',
         "Pipelines ETL/ELT sous SQL Server et connecteurs d'ingestion depuis un ERP, des API REST et des bases SQL.",
         'Migration ERP fiabilisée : environ 1 440 tiers et 300 opérations rapprochés, zéro perte de donnée critique.',
         "Outil Python d'aide à la décision : pipeline de features et modèles de prédiction du risque de marge.",
