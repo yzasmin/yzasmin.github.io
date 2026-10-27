@@ -4,10 +4,10 @@ titre: 'Mini-ERP de courtage santé et prévoyance'
 ordre: 8
 categorie: 'ERP, flux financiers et pilotage'
 famille: engineering
-resume: 'Un courtier grossiste délégataire reçoit chaque mois des bordereaux, un relevé bancaire et des retours de prestations, et doit en tirer les encaissements, ses commissions et les reversements à ses apporteurs. Ce mini-ERP le fait sur un portefeuille simulé, refuse en entier tout fichier qui ne passe pas les contrôles, et alimente un tableau de bord dont chaque mesure est comparée au SQL.'
+resume: 'Un courtier grossiste délégataire reçoit chaque mois des bordereaux, un relevé bancaire et des retours de prestations, et doit en tirer les encaissements, ses commissions et les reversements à ses apporteurs. Ce mini-ERP le fait sur un portefeuille simulé, refuse en entier tout fichier qui ne passe pas les contrôles, alimente un tableau de bord dont chaque mesure est comparée au SQL, pré-remplit les dossiers reçus par un modèle de langage sous validation humaine, et score chaque mois le risque de résiliation.'
 statut: publie
 motif: pipeline
-stack: ['Python', 'FastAPI', 'PostgreSQL', 'SQLAlchemy', 'Alembic', 'Apache Airflow', 'dbt', 'Power BI', 'Docker']
+stack: ['Python', 'FastAPI', 'PostgreSQL', 'SQLAlchemy', 'Alembic', 'Apache Airflow', 'dbt', 'Power BI', 'scikit-learn', 'LightGBM', 'API Claude', 'Docker']
 liens:
   github: 'https://github.com/yzasmin/courtage-erp'
 teaser: 'video/projets/courtage-erp.mp4'
@@ -15,7 +15,7 @@ metriques:
   - { label: 'Lots refusés en entier, aucune ligne écrite', valeur: '9 sur 27' }
   - { label: 'Comparaisons entre mesures Power BI et SQL', valeur: '302' }
   - { label: 'Défauts réintroduits, tous détectés par les tests', valeur: '9 sur 9' }
-  - { label: 'Tests passés', valeur: '238' }
+  - { label: 'Tests passés', valeur: '255' }
 ---
 
 ## Contexte et problème
@@ -37,9 +37,9 @@ commission ou régler une prestation trois ans plus tard, il faut pouvoir dire d
 date donnée.
 
 J'ai donc construit le cœur de gestion, la chaîne qui contrôle et rapproche les flux, et le tableau de bord
-qui en rend compte, sur un portefeuille entièrement simulé. Les modules d'intelligence artificielle prévus
-au départ, un agent de pré-remplissage et une prédiction de résiliation, ne sont pas réalisés : j'y reviens
-dans les limites.
+qui en rend compte, sur un portefeuille entièrement simulé. J'y ai ajouté deux modules d'intelligence
+artificielle : un agent qui lit les documents reçus et pré-remplit un dossier qu'un gestionnaire valide, et
+une prédiction de résiliation scorée chaque mois. La recherche dans les conditions générales n'est pas faite.
 
 ## Données
 
@@ -72,9 +72,9 @@ Les prestations de 2020 à 2023 n'ont pas de cotisation en face, le quittancemen
 
 ## Approche
 
-Trois modules, chacun construit sur le précédent.
+Cinq modules, chacun construit sur les précédents.
 
-**Cœur ERP.** Un modèle de 31 tables, deux moteurs (PostgreSQL en production, SQLite pour développer et
+**Cœur ERP.** Un modèle de 33 tables, deux moteurs (PostgreSQL en production, SQLite pour développer et
 tester) servis par le même code, des migrations Alembic qui montent et redescendent sans résidu. Chaque
 changement d'un contrat est un avenant daté, et l'état à une date se reconstitue en relisant les avenants :
 l'API dit de quel avenant provient la valeur retournée. La délégation de gestion est vérifiée avant toute
@@ -101,6 +101,27 @@ SQL de contrôle correspondante.
 ![Les anomalies de rapprochement dans l'ERP : neuf lots refusés avec leur motif, puis les écarts de rapprochement](/images/projets/courtage-erp/anomalies-rapprochement.jpg)
 
 ![Le graphe Airflow de la chaîne des flux financiers, exécuté sur la pile Docker](/images/projets/courtage-erp/graphe-airflow.jpg)
+
+**Agent de pré-remplissage.** Trente documents fictifs en PDF (demandes de remboursement, factures,
+attestations d'employeur), dont huit portent une anomalie injectée : nom altéré, adhérent inexistant, total
+faux, soins antérieurs à l'effet du contrat. Claude Haiku en extrait les champs dans un format structuré
+imposé, revalidé à la réception. Le dossier est ensuite confronté au portefeuille : adhérent trouvé, nom
+comparé, contrat rattaché, garantie en vigueur à la date des soins, total égal à la somme des lignes,
+délégation de la compagnie. Il naît toujours « à valider » : seule la décision du gestionnaire crée la
+prestation, et la base refuse une prestation liée à un dossier non validé. Chaque réponse du modèle est
+enregistrée avec l'empreinte de la requête, ce qui rejoue l'évaluation sans clé ni appel payant.
+
+![L'écran des dossiers pré-remplis : champs lus, contrôles et décision du gestionnaire](/images/projets/courtage-erp/dossiers-a-valider.png)
+
+**Prédiction de résiliation.** Un modèle dbt produit une ligne par contrat et par 1er du mois, avec pour
+cible une résiliation effective dans les douze mois. Un test dbt vérifie qu'aucune variable ne lit une
+information postérieure à la date d'observation. L'apprentissage porte sur les 1er janvier 2023 et 2024, le
+test sur le 1er janvier 2025. Une régression logistique est déployée, LightGBM sert de comparaison, et les
+deux sont mesurés contre un plafond : la formule même du générateur, que nul modèle ne peut dépasser sur ces
+données. Un graphe Airflow mensuel score le portefeuille, et la fiche adhérent affiche la probabilité avec
+ses trois facteurs principaux.
+
+![La fiche adhérent avec son score de résiliation et ses trois facteurs](/images/projets/courtage-erp/fiche-adherent-score.png)
 
 ## Choix techniques
 
@@ -132,11 +153,15 @@ L'exécution du graphe Airflow a été faite sur la pile Docker du poste de dév
 | Bordereaux produits                                | 33, dont 9 de commissions et 24 de rétrocessions                                                     | `results/flux_bordereaux.json`             |
 | Modèles dbt, tests, exposition                     | 52 modèles, 151 tests, 3 expositions : 199 réussites, 4 avertissements, 0 erreur                     | `results/dbt_build.txt`                    |
 | Mesures Power BI contre SQL                        | 302 comparaisons, écart relatif maximal 2,9e-14                                                      | `results/concordance_dax_sql.csv`          |
-| Migrations qui montent et redescendent             | 6 révisions, 31 tables, aucun résidu                                                                 | `results/migrations_postgresql.json`       |
+| Migrations qui montent et redescendent             | 8 révisions, 33 tables, aucun résidu                                                                 | `results/migrations_postgresql.json`       |
+| Extraction des 30 documents par Claude Haiku       | 96,7 % des champs exacts, 8 anomalies sur 8 signalées, aucun document sain bloqué                    | `results/ia_evaluation.json`               |
+| Coût et latence de l'extraction                    | 0,000272 $ et 1 807 ms en moyenne par document, 0,0081 $ pour les 30                                 | `results/ia_evaluation.json`               |
+| Prédiction de résiliation, test au 01/01/2025      | ROC-AUC 0,645, lift 2,22 sur le premier décile, plafond du générateur 0,662                          | `results/ml_resiliation.json`              |
+| LightGBM, même test                                | ROC-AUC 0,645, lift 1,98 : pas mieux que la régression logistique                                    | `results/ml_resiliation.json`              |
 | Génération reproductible                           | même empreinte sur SQLite et PostgreSQL, deux exécutions chacun                                      | `results/reproductibilite_postgresql.json` |
 | Cohérence métier des données                       | 18 contrôles, tous conformes                                                                         | `results/coherence_metier.json`            |
 | Défauts réintroduits, détectés par les tests       | 9 sur 9                                                                                              | `results/mutation.json`                    |
-| Suite de tests                                     | 238 passés, 13 sautés                                                                                | `results/pytest.txt`                       |
+| Suite de tests                                     | 255 passés, 13 sautés                                                                                | `results/pytest.txt`                       |
 
 Les quatre indicateurs, sur le jeu simulé (`results/kpi_sql.json`) :
 
@@ -179,10 +204,13 @@ plus. Les taux, les plafonds et les périmètres de délégation sont des hypoth
 
 ## Limites et pistes d'amélioration
 
-Les modules 4 et 5 ne sont pas faits. Il n'y a ni agent de pré-remplissage par un modèle de langage, ni
-recherche dans les conditions générales, ni modèle de prédiction de résiliation, et aucune métrique de
-prédiction n'est publiée. L'écran « Dossiers à valider » existe et affiche un message d'attente. Le taux de
-résiliation du tableau de bord décrit le passé, il ne prédit rien.
+La recherche dans les conditions générales (module 4b) n'est pas faite. L'extraction est mesurée sur trente
+documents que j'ai générés, au texte propre : ni scan, ni écriture manuscrite. Les dix champs faux portent
+tous sur l'émetteur, que le modèle complète d'un libellé de service ; je n'ai pas corrigé la vérité terrain
+pour les faire passer. La prédiction de résiliation reste modeste (ROC-AUC 0,645) parce que le générateur
+tire les résiliations au hasard autour de ses propres causes : le plafond calculé avec sa formule n'est que
+de 0,662. Le score aide à ordonner les appels d'un chargé de clientèle, il ne désigne pas qui partira. Le
+remboursement santé est simplifié : il s'applique aux frais présentés, sans base de la Sécurité sociale.
 
 Le portefeuille est simulé : les signaux qu'il contient (saisonnalité, hausses du 1er janvier, résiliations
 liées à l'ancienneté et au tarif) sont ceux que le générateur y a mis. Le rappel et la précision des contrôles
@@ -201,5 +229,5 @@ capture en montre treize. Le projet Power BI versionné porte un chemin d'exempl
 après un clone.
 
 La suite logique, dans l'ordre : ingérer le bordereau de commissions de la compagnie pour supprimer l'assiette
-de repli, faire exécuter dbt par l'intégration continue, puis seulement les modules d'intelligence
-artificielle, que je ne publierai qu'avec leurs mesures.
+de repli, faire exécuter dbt par l'intégration continue, puis la recherche dans les conditions générales,
+que je ne publierai qu'avec ses mesures.
