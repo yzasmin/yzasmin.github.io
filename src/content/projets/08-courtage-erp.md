@@ -10,6 +10,7 @@ motif: pipeline
 stack: ['Python', 'FastAPI', 'PostgreSQL', 'SQLAlchemy', 'Alembic', 'Apache Airflow', 'dbt', 'Power BI', 'scikit-learn', 'LightGBM', 'API Claude', 'Docker']
 liens:
   github: 'https://github.com/yzasmin/courtage-erp'
+  demo: 'https://courtage-erp-demo.onrender.com/'
 teaser: 'video/projets/courtage-erp.mp4'
 metriques:
   - { label: 'Lots refusés en entier, aucune ligne écrite', valeur: '9 sur 27' }
@@ -211,6 +212,11 @@ pour les faire passer. La prédiction de résiliation reste modeste (ROC-AUC 0,6
 tire les résiliations au hasard autour de ses propres causes : le plafond calculé avec sa formule n'est que
 de 0,662. Le score aide à ordonner les appels d'un chargé de clientèle, il ne désigne pas qui partira. Le
 remboursement santé est simplifié : il s'applique aux frais présentés, sans base de la Sécurité sociale.
+
+La démonstration en ligne ne montre que l'interface, sur une base SQLite fournie : la chaîne Airflow, dbt et
+Power BI ne tournent que sur la pile Docker. Hébergée gratuitement, elle s'endort après quinze minutes sans
+visite, et la première page met alors environ une minute à s'afficher. Elle n'a pas d'authentification : sa
+base est remise à zéro à chaque redémarrage.
 
 Le portefeuille est simulé : les signaux qu'il contient (saisonnalité, hausses du 1er janvier, résiliations
 liées à l'ancienneté et au tarif) sont ceux que le générateur y a mis. Le rappel et la précision des contrôles
