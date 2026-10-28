@@ -7,7 +7,21 @@ famille: engineering
 resume: 'Un courtier grossiste délégataire reçoit chaque mois des bordereaux, un relevé bancaire et des retours de prestations, et doit en tirer les encaissements, ses commissions et les reversements à ses apporteurs. Ce mini-ERP le fait sur un portefeuille simulé, refuse en entier tout fichier qui ne passe pas les contrôles, alimente un tableau de bord dont chaque mesure est comparée au SQL, pré-remplit les dossiers reçus par un modèle de langage sous validation humaine, et score chaque mois le risque de résiliation.'
 statut: publie
 motif: pipeline
-stack: ['Python', 'FastAPI', 'PostgreSQL', 'SQLAlchemy', 'Alembic', 'Apache Airflow', 'dbt', 'Power BI', 'scikit-learn', 'LightGBM', 'API Claude', 'Docker']
+stack:
+  [
+    'Python',
+    'FastAPI',
+    'PostgreSQL',
+    'SQLAlchemy',
+    'Alembic',
+    'Apache Airflow',
+    'dbt',
+    'Power BI',
+    'scikit-learn',
+    'LightGBM',
+    'API Claude',
+    'Docker',
+  ]
 liens:
   github: 'https://github.com/yzasmin/courtage-erp'
   demo: 'https://courtage-erp-demo.onrender.com/'
